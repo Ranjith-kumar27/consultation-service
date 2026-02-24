@@ -30,47 +30,64 @@ class _CallPageState extends State<CallPage> {
   }
 
   Future<void> _initAgora() async {
-    // Request permissions
-    await [Permission.microphone, Permission.camera].request();
+    try {
+      // Request permissions
+      await [Permission.microphone, Permission.camera].request();
 
-    // Create engine
-    _engine = createAgoraRtcEngine();
-    await _engine.initialize(
-      const RtcEngineContext(
-        appId: AppConstants.agoraAppId,
-        channelProfile: ChannelProfileType.channelProfileCommunication,
-      ),
-    );
+      if (AppConstants.agoraAppId == "YOUR_AGORA_APP_ID") {
+        throw Exception("Agora App ID not configured correctly.");
+      }
 
-    _engine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          setState(() => _localUserJoined = true);
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          setState(() => _remoteUid = remoteUid);
-        },
-        onUserOffline:
-            (
-              RtcConnection connection,
-              int remoteUid,
-              UserOfflineReasonType reason,
-            ) {
-              setState(() => _remoteUid = null);
-              _endCall();
-            },
-      ),
-    );
+      // Create engine
+      _engine = createAgoraRtcEngine();
+      await _engine.initialize(
+        const RtcEngineContext(
+          appId: AppConstants.agoraAppId,
+          channelProfile: ChannelProfileType.channelProfileCommunication,
+        ),
+      );
 
-    await _engine.enableVideo();
-    await _engine.startPreview();
+      _engine.registerEventHandler(
+        RtcEngineEventHandler(
+          onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+            setState(() => _localUserJoined = true);
+          },
+          onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+            setState(() => _remoteUid = remoteUid);
+          },
+          onUserOffline:
+              (
+                RtcConnection connection,
+                int remoteUid,
+                UserOfflineReasonType reason,
+              ) {
+                setState(() => _remoteUid = null);
+                _endCall();
+              },
+        ),
+      );
 
-    await _engine.joinChannel(
-      token: "", // Get from state or backend
-      channelId: widget.channelName,
-      uid: 0,
-      options: const ChannelMediaOptions(),
-    );
+      await _engine.enableVideo();
+      await _engine.startPreview();
+
+      await _engine.joinChannel(
+        token: "", // Get from state or backend
+        channelId: widget.channelName,
+        uid: 0,
+        options: const ChannelMediaOptions(),
+      );
+    } catch (e) {
+      debugPrint("Agora Error: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to initialize call: ${e.toString()}"),
+            backgroundColor: Colors.red,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    }
   }
 
   void _endCall() {

@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import '../../features/auth/presentation/pages/splash_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_patient_page.dart';
 import '../../features/auth/presentation/pages/register_doctor_page.dart';
@@ -17,8 +18,9 @@ import '../../features/call/presentation/pages/call_page.dart';
 class AppRouter {
   static final router = GoRouter(
     initialLocation:
-        '/login', // Will change to splash screen or check auth state
+        '/splash', // Will change to splash screen or check auth state
     routes: [
+      GoRoute(path: '/splash', builder: (context, state) => const SplashPage()),
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(
         path: '/register-patient',

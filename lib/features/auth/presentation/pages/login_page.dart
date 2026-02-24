@@ -71,18 +71,11 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 20),
-                    Center(
-                      child: Lottie.asset(
-                        'assets/icons/heartbeat.json',
-                        // height: 200,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 140),
                     Center(
                       child: Lottie.asset(
                         'assets/icons/welcome.json',
-                        height: 60,
+                        height: 80,
                       ),
                     ),
                     const SizedBox(height: 16),
