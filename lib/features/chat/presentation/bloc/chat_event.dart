@@ -40,3 +40,13 @@ class MarkMessageAsReadEvent extends ChatEvent {
   @override
   List<Object?> get props => [messageId];
 }
+
+class LoadRecentChatsEvent extends ChatEvent {}
+
+class RecentChatsUpdatedEvent extends ChatEvent {
+  final List<Map<String, dynamic>> chats;
+  const RecentChatsUpdatedEvent(this.chats);
+
+  @override
+  List<Object?> get props => [chats];
+}

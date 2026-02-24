@@ -56,8 +56,11 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.history),
-            onPressed: () =>
-                context.go('/patient-history'), // Not implemented yet
+            onPressed: () => context.go('/patient-history'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.chat_outlined),
+            onPressed: () => context.push('/recent-chats'),
           ),
           IconButton(
             icon: const Icon(Icons.logout),

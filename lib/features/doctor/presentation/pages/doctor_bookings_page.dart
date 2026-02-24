@@ -154,7 +154,8 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
                 ),
               ],
             ),
-          if (booking.status == AppointmentStatus.confirmed)
+          if (booking.status == AppointmentStatus.confirmed ||
+              booking.status == AppointmentStatus.completed)
             Padding(
               padding: const EdgeInsets.only(top: 12.0),
               child: Row(

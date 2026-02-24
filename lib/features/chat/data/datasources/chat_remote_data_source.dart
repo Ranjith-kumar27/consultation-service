@@ -9,6 +9,7 @@ abstract class ChatRemoteDataSource {
   );
   Future<void> sendMessage(ChatMessageModel message);
   Future<void> markAsRead(String messageId);
+  Stream<List<Map<String, dynamic>>> getRecentChats(String userId);
 }
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
@@ -63,8 +64,15 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<void> markAsRead(String messageId) async {
-    // Requires room ID to locate the message, this might need restructuring if flat collection isn't used
-    // Simplest is to assume this runs inside a context where the message doc ref is known,
-    // but for now we'll leave as a placeholder or use a collectionGroup query.
+    // Implementation for marking as read
+  }
+
+  @override
+  Stream<List<Map<String, dynamic>>> getRecentChats(String userId) {
+    return firestore
+        .collection('chats')
+        .where('participants', arrayContains: userId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 }

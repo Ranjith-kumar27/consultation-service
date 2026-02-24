@@ -54,6 +54,7 @@ import '../../features/chat/domain/repositories/chat_repository.dart';
 import '../../features/chat/domain/usecases/get_chat_stream_usecase.dart';
 import '../../features/chat/domain/usecases/send_message_usecase.dart';
 import '../../features/chat/domain/usecases/mark_as_read_usecase.dart';
+import '../../features/chat/domain/usecases/get_recent_chats_usecase.dart';
 import '../../features/chat/presentation/bloc/chat_bloc.dart';
 
 // Call Imports
@@ -204,6 +205,7 @@ Future<void> init() async {
       getChatStreamUseCase: sl(),
       sendMessageUseCase: sl(),
       markAsReadUseCase: sl(),
+      getRecentChatsUseCase: sl(),
       authRepository: sl(),
     ),
   );
@@ -212,6 +214,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetChatStreamUseCase(sl()));
   sl.registerLazySingleton(() => SendMessageUseCase(sl()));
   sl.registerLazySingleton(() => MarkAsReadUseCase(sl()));
+  sl.registerLazySingleton(() => GetRecentChatsUseCase(sl()));
 
   // Repository
   sl.registerLazySingleton<ChatRepository>(

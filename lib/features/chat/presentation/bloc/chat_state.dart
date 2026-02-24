@@ -29,3 +29,11 @@ class ChatError extends ChatState {
 }
 
 class MessageSent extends ChatState {}
+
+class RecentChatsLoaded extends ChatState {
+  final List<Map<String, dynamic>> chats;
+  const RecentChatsLoaded(this.chats);
+
+  @override
+  List<Object?> get props => [chats];
+}

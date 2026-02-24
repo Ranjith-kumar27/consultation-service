@@ -154,7 +154,8 @@ class _PatientHistoryPageState extends State<PatientHistoryPage> {
                             ),
                           ],
                         ),
-                        if (booking.status == AppointmentStatus.confirmed)
+                        if (booking.status == AppointmentStatus.confirmed ||
+                            booking.status == AppointmentStatus.completed)
                           Padding(
                             padding: const EdgeInsets.only(top: 20.0),
                             child: Row(

@@ -13,6 +13,7 @@ import '../../features/doctor/presentation/pages/doctor_earnings_page.dart';
 import '../../features/doctor/presentation/pages/doctor_profile_settings_page.dart';
 import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
+import '../../features/chat/presentation/pages/recent_chats_page.dart';
 import '../../features/call/presentation/pages/call_page.dart';
 
 class AppRouter {
@@ -83,6 +84,10 @@ class AppRouter {
           channelName: state.pathParameters['channelName']!,
           callId: state.uri.queryParameters['callId'],
         ),
+      ),
+      GoRoute(
+        path: '/recent-chats',
+        builder: (context, state) => const RecentChatsPage(),
       ),
     ],
   );

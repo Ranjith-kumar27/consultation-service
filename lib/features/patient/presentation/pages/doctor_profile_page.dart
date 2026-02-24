@@ -31,7 +31,7 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
   void _bookAppointment() {
     if (_selectedDate != null && _selectedSlot != null) {
       // Parse slot time
-      final time = DateFormat.jm().parse(_selectedSlot!);
+      final time = DateFormat('hh:mm a').parse(_selectedSlot!);
       final hour = time.hour;
       final minute = time.minute;
 

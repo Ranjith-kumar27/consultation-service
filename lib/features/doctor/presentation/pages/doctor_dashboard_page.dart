@@ -54,6 +54,10 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
             icon: const Icon(Icons.wallet),
           ),
           IconButton(
+            onPressed: () => context.push('/recent-chats'),
+            icon: const Icon(Icons.chat_outlined),
+          ),
+          IconButton(
             onPressed: () {
               context.read<AuthBloc>().add(LogoutRequestedEvent());
               context.go('/login');

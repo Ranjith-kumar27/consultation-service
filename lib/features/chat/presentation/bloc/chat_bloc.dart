@@ -4,6 +4,7 @@ import '../../domain/entities/chat_message_entity.dart';
 import '../../domain/usecases/get_chat_stream_usecase.dart';
 import '../../domain/usecases/send_message_usecase.dart';
 import '../../domain/usecases/mark_as_read_usecase.dart';
+import '../../domain/usecases/get_recent_chats_usecase.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
@@ -13,14 +14,17 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final GetChatStreamUseCase getChatStreamUseCase;
   final SendMessageUseCase sendMessageUseCase;
   final MarkAsReadUseCase markAsReadUseCase;
+  final GetRecentChatsUseCase getRecentChatsUseCase;
   final AuthRepository authRepository;
 
   StreamSubscription? _chatSubscription;
+  StreamSubscription? _recentChatsSubscription;
 
   ChatBloc({
     required this.getChatStreamUseCase,
     required this.sendMessageUseCase,
     required this.markAsReadUseCase,
+    required this.getRecentChatsUseCase,
     required this.authRepository,
   }) : super(ChatInitial()) {
     on<LoadMessagesEvent>((event, emit) async {
@@ -70,11 +74,36 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<MarkMessageAsReadEvent>((event, emit) async {
       await markAsReadUseCase(event.messageId);
     });
+
+    on<LoadRecentChatsEvent>((event, emit) async {
+      emit(ChatLoading());
+      final result = await authRepository.getCurrentUser();
+      final currentUserId = result.fold((l) => null, (r) => r.uid);
+      if (currentUserId == null) {
+        emit(const ChatError('User not authenticated'));
+        return;
+      }
+
+      await _recentChatsSubscription?.cancel();
+      _recentChatsSubscription = getRecentChatsUseCase(currentUserId).listen((
+        result,
+      ) {
+        result.fold(
+          (failure) => add(const RecentChatsUpdatedEvent([])),
+          (chats) => add(RecentChatsUpdatedEvent(chats)),
+        );
+      });
+    });
+
+    on<RecentChatsUpdatedEvent>((event, emit) {
+      emit(RecentChatsLoaded(event.chats));
+    });
   }
 
   @override
   Future<void> close() {
     _chatSubscription?.cancel();
+    _recentChatsSubscription?.cancel();
     return super.close();
   }
 }

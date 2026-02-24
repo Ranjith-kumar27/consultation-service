@@ -57,4 +57,20 @@ class ChatRepositoryImpl implements ChatRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Stream<Either<Failure, List<Map<String, dynamic>>>> getRecentChats(
+    String userId,
+  ) {
+    return remoteDataSource
+        .getRecentChats(userId)
+        .map((list) {
+          return Right<Failure, List<Map<String, dynamic>>>(list);
+        })
+        .handleError((error) {
+          return Left<Failure, List<Map<String, dynamic>>>(
+            ServerFailure(error.toString()),
+          );
+        });
+  }
 }

@@ -49,10 +49,18 @@ service cloud.firestore {
 
     // Chat
     match /chats/{chatId} {
-      allow read, write: if isAuthenticated() && chatId.contains(request.auth.uid);
+      // Use split and in for robust checking of UIDs in the room ID
+      allow read, write: if isAuthenticated() && (
+        request.auth.uid in chatId.split('_') || 
+        (resource != null && request.auth.uid in resource.data.participants)
+      );
       
       match /messages/{messageId} {
-        allow read, write: if isAuthenticated() && chatId.contains(request.auth.uid);
+        allow read, write: if isAuthenticated() && (
+          request.auth.uid in chatId.split('_') ||
+          (get(/databases/$(database)/documents/chats/$(chatId)).data.participants != null && 
+           request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants)
+        );
       }
     }
   }

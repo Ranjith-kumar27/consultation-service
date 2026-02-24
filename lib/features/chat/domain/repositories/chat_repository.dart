@@ -9,4 +9,7 @@ abstract class ChatRepository {
   );
   Future<Either<Failure, void>> sendMessage(ChatMessageEntity message);
   Future<Either<Failure, void>> markAsRead(String messageId);
+  Stream<Either<Failure, List<Map<String, dynamic>>>> getRecentChats(
+    String userId,
+  );
 }
