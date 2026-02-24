@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../domain/entities/doctor_entity.dart';
 import '../../../patient/domain/entities/appointment_entity.dart';
 
 abstract class DoctorState extends Equatable {
@@ -22,6 +23,8 @@ class DoctorAvailabilityUpdated extends DoctorState {
 
 class DoctorSlotsUpdated extends DoctorState {}
 
+class DoctorProfileUpdated extends DoctorState {}
+
 class DoctorBookingsLoaded extends DoctorState {
   final List<AppointmentEntity> bookings;
   const DoctorBookingsLoaded(this.bookings);
@@ -38,6 +41,14 @@ class DoctorEarningsLoaded extends DoctorState {
 
   @override
   List<Object?> get props => [earnings];
+}
+
+class DoctorInfoLoaded extends DoctorState {
+  final DoctorEntity doctor;
+  const DoctorInfoLoaded(this.doctor);
+
+  @override
+  List<Object?> get props => [doctor];
 }
 
 class DoctorError extends DoctorState {

@@ -29,3 +29,5 @@ class BlockUserEvent extends AdminEvent {
 class LoadAllBookingsEvent extends AdminEvent {}
 
 class LoadTotalTransactionsEvent extends AdminEvent {}
+
+class LoadAllUsersEvent extends AdminEvent {}

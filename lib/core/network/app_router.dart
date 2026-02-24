@@ -9,6 +9,7 @@ import '../../features/doctor/presentation/pages/doctor_dashboard_page.dart';
 import '../../features/doctor/presentation/pages/doctor_availability_page.dart';
 import '../../features/doctor/presentation/pages/doctor_bookings_page.dart';
 import '../../features/doctor/presentation/pages/doctor_earnings_page.dart';
+import '../../features/doctor/presentation/pages/doctor_profile_settings_page.dart';
 import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/call/presentation/pages/call_page.dart';
@@ -58,6 +59,10 @@ class AppRouter {
       GoRoute(
         path: '/doctor/earnings',
         builder: (context, state) => const DoctorEarningsPage(),
+      ),
+      GoRoute(
+        path: '/doctor/profile',
+        builder: (context, state) => const DoctorProfileSettingsPage(),
       ),
       GoRoute(
         path: '/admin/dashboard',

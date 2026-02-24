@@ -7,6 +7,7 @@ class UserModel extends UserEntity {
     required super.name,
     required super.email,
     required super.role,
+    super.isBlocked = false,
     super.fcmToken,
     super.profileImageUrl,
   });
@@ -21,6 +22,7 @@ class UserModel extends UserEntity {
         (e) => e.name == data['role'],
         orElse: () => UserRole.patient,
       ),
+      isBlocked: data['isBlocked'] ?? false,
       fcmToken: data['fcmToken'],
       profileImageUrl: data['profileImageUrl'],
     );
@@ -33,6 +35,7 @@ class UserModel extends UserEntity {
       'role': role.name,
       'fcmToken': fcmToken,
       'profileImageUrl': profileImageUrl,
+      'isBlocked': isBlocked,
     };
   }
 }

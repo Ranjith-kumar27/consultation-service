@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Sage Green Medical Theme
-  static const Color primary = Color(0xFF5E8B7E);
-  static const Color primaryLight = Color(0xFFA4C3B2);
-  static const Color primaryDark = Color(0xFF2D6A4F);
+  // Healing Green Medical Theme
+  static const Color primary = Color(0xFF28A745);
+  static const Color primaryLight = Color(0xFF5CAC94);
+  static const Color primaryDark = Color(0xFF1E7E34);
 
   // Background and Surfaces
-  static const Color background = Color(0xFFF6F8F6);
+  static const Color background = Color(0xFFF8FAFC);
   static const Color surface = Colors.white;
+  static const Color glassSurface = Color(0xCCFFFFFF);
+  static const Color shadowColor = Color(0x0F000000);
 
   // Text Colors
   static const Color textPrimary = Color(0xFF1E293B);

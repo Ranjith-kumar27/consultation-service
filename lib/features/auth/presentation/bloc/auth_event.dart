@@ -39,16 +39,27 @@ class RegisterDoctorEvent extends AuthEvent {
   final String email;
   final String password;
   final String specialization;
+  final String location;
+  final double consultationFee;
 
   const RegisterDoctorEvent({
     required this.name,
     required this.email,
     required this.password,
     required this.specialization,
+    required this.location,
+    required this.consultationFee,
   });
 
   @override
-  List<Object?> get props => [name, email, password, specialization];
+  List<Object?> get props => [
+    name,
+    email,
+    password,
+    specialization,
+    location,
+    consultationFee,
+  ];
 }
 
 class LogoutRequestedEvent extends AuthEvent {}

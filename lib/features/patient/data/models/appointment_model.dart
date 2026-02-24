@@ -5,7 +5,9 @@ class AppointmentModel extends AppointmentEntity {
   const AppointmentModel({
     required super.id,
     required super.doctorId,
+    super.doctorName = '',
     required super.patientId,
+    super.patientName = '',
     required super.startTime,
     required super.endTime,
     required super.durationMinutes,
@@ -15,12 +17,18 @@ class AppointmentModel extends AppointmentEntity {
     required super.status,
   });
 
-  factory AppointmentModel.fromFirestore(DocumentSnapshot doc) {
+  factory AppointmentModel.fromFirestore(
+    DocumentSnapshot doc, {
+    String? doctorName,
+    String? patientName,
+  }) {
     Map data = doc.data() as Map<String, dynamic>;
     return AppointmentModel(
       id: doc.id,
       doctorId: data['doctorId'] ?? '',
+      doctorName: doctorName ?? (data['doctorName'] ?? ''),
       patientId: data['patientId'] ?? '',
+      patientName: patientName ?? (data['patientName'] ?? ''),
       startTime: (data['startTime'] as Timestamp).toDate(),
       endTime: (data['endTime'] as Timestamp).toDate(),
       durationMinutes: data['durationMinutes'] ?? 0,
@@ -29,7 +37,7 @@ class AppointmentModel extends AppointmentEntity {
       doctorEarning: (data['doctorEarning'] ?? 0.0).toDouble(),
       status: AppointmentStatus.values.firstWhere(
         (e) => e.name == data['status'],
-        orElse: () => AppointmentStatus.pending,
+        orElse: () => AppointmentStatus.confirmed,
       ),
     );
   }
@@ -37,7 +45,9 @@ class AppointmentModel extends AppointmentEntity {
   Map<String, dynamic> toFirestore() {
     return {
       'doctorId': doctorId,
+      'doctorName': doctorName,
       'patientId': patientId,
+      'patientName': patientName,
       'startTime': Timestamp.fromDate(startTime),
       'endTime': Timestamp.fromDate(endTime),
       'durationMinutes': durationMinutes,

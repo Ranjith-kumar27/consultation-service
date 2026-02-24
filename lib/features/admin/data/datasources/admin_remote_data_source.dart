@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../doctor/data/models/doctor_model.dart';
 import '../../../patient/data/models/appointment_model.dart';
+import '../../../auth/data/models/user_model.dart';
 import '../../../../core/error/exceptions.dart';
 
 abstract class AdminRemoteDataSource {
@@ -9,6 +10,7 @@ abstract class AdminRemoteDataSource {
   Future<void> blockUser(String userId, bool isBlocked);
   Future<List<AppointmentModel>> getAllBookings();
   Future<double> getTotalTransactionsAmount();
+  Future<List<UserModel>> getAllUsers();
 }
 
 class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
@@ -23,9 +25,18 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
           .collection('doctors_info')
           .where('isApproved', isEqualTo: false)
           .get();
-      return snapshot.docs
-          .map((doc) => DoctorModel.fromFirestore(doc))
-          .toList();
+
+      final pendingDoctors = await Future.wait(
+        snapshot.docs.map((doc) async {
+          final userDoc = await firestore.collection('users').doc(doc.id).get();
+          final name = userDoc.exists
+              ? (userDoc.data()?['name'] ?? 'Doctor')
+              : 'Doctor';
+          return DoctorModel.fromFirestore(doc, name: name);
+        }),
+      );
+
+      return pendingDoctors;
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -57,9 +68,31 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
   Future<List<AppointmentModel>> getAllBookings() async {
     try {
       final snapshot = await firestore.collection('appointments').get();
-      return snapshot.docs
-          .map((doc) => AppointmentModel.fromFirestore(doc))
-          .toList();
+      final bookings = await Future.wait(
+        snapshot.docs.map((doc) async {
+          final data = doc.data();
+          final dId = data['doctorId'] ?? '';
+          final pId = data['patientId'] ?? '';
+
+          final dDocFuture = firestore.collection('users').doc(dId).get();
+          final pDocFuture = firestore.collection('users').doc(pId).get();
+          final results = await Future.wait([dDocFuture, pDocFuture]);
+
+          final dName = results[0].exists
+              ? (results[0].data()?['name'] ?? 'Doctor')
+              : 'Doctor';
+          final pName = results[1].exists
+              ? (results[1].data()?['name'] ?? 'Patient')
+              : 'Patient';
+
+          return AppointmentModel.fromFirestore(
+            doc,
+            doctorName: dName,
+            patientName: pName,
+          );
+        }),
+      );
+      return bookings;
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -74,6 +107,16 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
         total += (doc.data()['totalAmount'] ?? 0.0).toDouble();
       }
       return total;
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      final snapshot = await firestore.collection('users').get();
+      return snapshot.docs.map((doc) => UserModel.fromFirestore(doc)).toList();
     } catch (e) {
       throw ServerException(e.toString());
     }

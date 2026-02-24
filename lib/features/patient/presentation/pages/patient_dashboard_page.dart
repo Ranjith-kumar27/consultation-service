@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import '../../../../core/widgets/empty_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../bloc/patient_bloc.dart';
 import '../bloc/patient_event.dart';
 import '../bloc/patient_state.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth_event.dart';
+import '../../../../core/widgets/shimmer_loaders.dart';
+import '../../../../core/constants/app_colors.dart';
 
 class PatientDashboardPage extends StatefulWidget {
   const PatientDashboardPage({super.key});
@@ -57,7 +62,7 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // Not implemented proper logout logic yet in ui, back to login for now
+              context.read<AuthBloc>().add(LogoutRequestedEvent());
               context.go('/login');
             },
           ),
@@ -67,37 +72,78 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
         children: [
           // Search & Filter Section
           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.03),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Search doctors...',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      hintText: 'Search for doctors or symptoms...',
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Theme.of(context).primaryColor,
                       ),
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
                     onSubmitted: (_) => _fetchDoctors(),
                   ),
                 ),
-                const SizedBox(width: 16),
-                DropdownButton<String>(
-                  value: _selectedSpecialization ?? 'All',
-                  items: specializations.map((String spec) {
-                    return DropdownMenuItem<String>(
-                      value: spec,
-                      child: Text(spec),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedSpecialization = newValue;
-                    });
-                    _fetchDoctors();
-                  },
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 40,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: specializations.length,
+                    itemBuilder: (context, index) {
+                      final spec = specializations[index];
+                      final isSelected =
+                          (_selectedSpecialization ?? 'All') == spec;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          label: Text(spec),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            setState(() {
+                              _selectedSpecialization = selected ? spec : 'All';
+                            });
+                            _fetchDoctors();
+                          },
+                          backgroundColor: Colors.white,
+                          selectedColor: Theme.of(context).primaryColor,
+                          labelStyle: TextStyle(
+                            color: isSelected
+                                ? Colors.white
+                                : AppColors.textSecondary,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(
+                              color: isSelected
+                                  ? Theme.of(context).primaryColor
+                                  : AppColors.divider,
+                            ),
+                          ),
+                          showCheckmark: false,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
@@ -108,70 +154,137 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
             child: BlocBuilder<PatientBloc, PatientState>(
               builder: (context, state) {
                 if (state is PatientLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const ShimmerListLoading();
                 } else if (state is PatientError) {
                   return Center(child: Text('Error: ${state.message}'));
                 } else if (state is DoctorsLoaded) {
                   if (state.doctors.isEmpty) {
-                    return const Center(child: Text('No doctors found.'));
+                    return EmptyState(
+                      title: 'No Doctors Found',
+                      message:
+                          'Try searching with a different name or specialization.',
+                      icon: Icons.search_off,
+                      onActionPressed: () {
+                        _searchController.clear();
+                        setState(() => _selectedSpecialization = 'All');
+                        _fetchDoctors();
+                      },
+                      actionLabel: 'Clear Filters',
+                    );
                   }
                   return ListView.builder(
                     itemCount: state.doctors.length,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     itemBuilder: (context, index) {
                       final doctor = state.doctors[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(16),
-                          leading: CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Theme.of(
-                              context,
-                            ).primaryColorLight,
-                            child: const Icon(
-                              Icons.person,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
-                          title: Text(
-                            'Dr. ${doctor.uid.substring(0, 5)}...', // Wait, ui lacks doc name since name is in UserEntity. We should probably just display specialization for now or fetch joined data later.
-                            // In a real app we'd aggregate UserEntity + DoctorEntity or store name in DoctorEntity. Let's assume name is handled later.
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                doctor.specialization,
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
+                      return GestureDetector(
+                        onTap: () =>
+                            context.push('/doctor-profile/${doctor.uid}'),
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.05,
+                                            ),
+                                            blurRadius: 10,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: CircleAvatar(
+                                        radius: 35,
+                                        backgroundColor: Theme.of(
+                                          context,
+                                        ).primaryColor.withOpacity(0.1),
+                                        backgroundImage: const NetworkImage(
+                                          'https://cdn-icons-png.flaticon.com/512/3774/3774299.png',
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      right: 2,
+                                      bottom: 2,
+                                      child: Container(
+                                        width: 14,
+                                        height: 14,
+                                        decoration: BoxDecoration(
+                                          color: doctor.isOnline
+                                              ? Colors.green
+                                              : Colors.grey,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.circle,
-                                    size: 10,
-                                    color: doctor.isOnline
-                                        ? Colors.green
-                                        : Colors.grey,
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Dr. ${doctor.name}',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleLarge,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        doctor.specialization,
+                                        style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.location_on,
+                                            size: 14,
+                                            color: AppColors.textSecondary,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            doctor.location ?? 'Online',
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodyMedium,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(doctor.isOnline ? 'Online' : 'Offline'),
-                                ],
-                              ),
-                            ],
-                          ),
-                          trailing: ElevatedButton(
-                            onPressed: () =>
-                                context.go('/doctor-profile/${doctor.uid}'),
-                            child: const Text('Book'),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(
+                                      context,
+                                    ).primaryColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(
+                                    Icons.chevron_right,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );

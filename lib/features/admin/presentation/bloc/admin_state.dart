@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../../doctor/domain/entities/doctor_entity.dart';
 import '../../../patient/domain/entities/appointment_entity.dart';
+import '../../../auth/domain/entities/user_entity.dart';
 
 abstract class AdminState extends Equatable {
   const AdminState();
@@ -39,6 +40,14 @@ class TotalTransactionsLoaded extends AdminState {
 
   @override
   List<Object?> get props => [amount];
+}
+
+class AllUsersLoaded extends AdminState {
+  final List<UserEntity> users;
+  const AllUsersLoaded(this.users);
+
+  @override
+  List<Object?> get props => [users];
 }
 
 class AdminError extends AdminState {

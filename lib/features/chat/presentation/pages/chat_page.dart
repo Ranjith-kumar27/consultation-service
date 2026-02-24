@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chat_event.dart';
 import '../bloc/chat_state.dart';
@@ -50,7 +51,11 @@ class _ChatPageState extends State<ChatPage> {
           IconButton(
             icon: const Icon(Icons.videocam),
             onPressed: () {
-              // Navigation to call will be implemented in next step
+              if (currentUserId != null) {
+                final channelName = [currentUserId!, widget.otherUserId]
+                  ..sort();
+                context.push('/call/${channelName.join('_')}');
+              }
             },
           ),
         ],

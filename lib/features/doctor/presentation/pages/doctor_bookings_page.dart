@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../core/widgets/empty_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../bloc/doctor_bloc.dart';
 import '../bloc/doctor_event.dart';
@@ -35,7 +37,20 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
           }
           if (state is DoctorBookingsLoaded) {
             if (state.bookings.isEmpty) {
-              return const Center(child: Text('No bookings found.'));
+              return EmptyState(
+                title: 'No Bookings Found',
+                message: 'You don\'t have any appointments booked yet.',
+                icon: Icons.calendar_today_outlined,
+                onActionPressed: () {
+                  final uid = FirebaseAuth.instance.currentUser?.uid;
+                  if (uid != null) {
+                    context.read<DoctorBloc>().add(
+                      LoadDoctorBookingsEvent(uid),
+                    );
+                  }
+                },
+                actionLabel: 'Refresh',
+              );
             }
             return ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -77,7 +92,7 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Patient Name', // Ideally this comes from the patient profile
+                booking.patientName,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -138,6 +153,43 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
                   ),
                 ),
               ],
+            ),
+          if (booking.status == AppointmentStatus.confirmed)
+            Padding(
+              padding: const EdgeInsets.only(top: 12.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        context.push(
+                          '/chat/${booking.patientId}/${booking.patientName}',
+                        );
+                      },
+                      icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                      label: const Text('Chat'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        final channelName = [
+                          booking.doctorId,
+                          booking.patientId,
+                        ]..sort();
+                        context.push('/call/${channelName.join('_')}');
+                      },
+                      icon: const Icon(Icons.videocam_outlined, size: 18),
+                      label: const Text('Call'),
+                    ),
+                  ),
+                ],
+              ),
             ),
         ],
       ),

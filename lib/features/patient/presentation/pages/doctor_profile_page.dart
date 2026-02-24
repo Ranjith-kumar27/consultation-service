@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import '../bloc/patient_bloc.dart';
 import '../bloc/patient_event.dart';
 import '../bloc/patient_state.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth_state.dart';
 
 class DoctorProfilePage extends StatefulWidget {
   final String doctorId;
@@ -29,9 +31,9 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
   void _bookAppointment() {
     if (_selectedDate != null && _selectedSlot != null) {
       // Parse slot time
-      final timeParts = _selectedSlot!.split(':');
-      final hour = int.parse(timeParts[0]);
-      final minute = int.parse(timeParts[1]);
+      final time = DateFormat.jm().parse(_selectedSlot!);
+      final hour = time.hour;
+      final minute = time.minute;
 
       final startTime = DateTime(
         _selectedDate!.year,
@@ -49,11 +51,21 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
       // Easiest is to fire event, we'll need to grab patientId somehow. Let's assume auth repo has it.
       // We'll pass empty patientId and let BLoC or UseCase get the current user, or adjust later.
 
+      final authState = context.read<AuthBloc>().state;
+      String patientId = '';
+      if (authState is Authenticated) {
+        patientId = authState.user.uid;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please login to book an appointment')),
+        );
+        return;
+      }
+
       context.read<PatientBloc>().add(
         BookAppointmentEvent(
           doctorId: widget.doctorId,
-          patientId:
-              'patient_dummy_id', // Need to fetch from Auth state instead
+          patientId: patientId,
           startTime: startTime,
           endTime: endTime,
         ),
@@ -95,55 +107,162 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Theme.of(context).primaryColorLight,
-                        child: const Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 40,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Dr. ${doctor.uid.substring(0, 5)}', // Name handling
-                              style: Theme.of(context).textTheme.displayMedium,
-                            ),
-                            Text(
-                              doctor.specialization,
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.circle,
-                                  size: 10,
-                                  color: doctor.isOnline
-                                      ? Colors.green
-                                      : Colors.grey,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  doctor.isOnline
-                                      ? 'Available Online'
-                                      : 'Currently Offline',
+                  Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      side: BorderSide(color: Colors.grey.shade100),
+                    ),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(
+                                    context,
+                                  ).primaryColor.withOpacity(0.1),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Theme.of(
+                                context,
+                              ).primaryColor.withOpacity(0.1),
+                              backgroundImage: const NetworkImage(
+                                'https://cdn-icons-png.flaticon.com/512/3774/3774299.png', // Medical professional vector
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Dr. ${doctor.name}', // Name handling
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.displayMedium,
+                                ),
+                                Text(
+                                  doctor.specialization,
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                if (doctor.location != null)
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_on,
+                                        size: 14,
+                                        color: Colors.grey,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        doctor.location!,
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Fee: ₹${doctor.consultationFee.toStringAsFixed(0)}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle,
+                                      size: 10,
+                                      color: doctor.isOnline
+                                          ? Colors.green
+                                          : Colors.grey,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      doctor.isOnline
+                                          ? 'Available Online'
+                                          : 'Currently Offline',
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          context.push(
+                                            '/chat/${doctor.uid}/${doctor.name}',
+                                          );
+                                        },
+                                        icon: const Icon(
+                                          Icons.chat_bubble_outline,
+                                          size: 18,
+                                        ),
+                                        label: const Text('Chat'),
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 8,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: OutlinedButton.icon(
+                                        onPressed: () {
+                                          final authState = context
+                                              .read<AuthBloc>()
+                                              .state;
+                                          if (authState is Authenticated) {
+                                            final pid = authState.user.uid;
+                                            final channelName = [
+                                              pid,
+                                              doctor.uid,
+                                            ]..sort();
+                                            context.push(
+                                              '/call/${channelName.join('_')}',
+                                            );
+                                          }
+                                        },
+                                        icon: const Icon(
+                                          Icons.videocam_outlined,
+                                          size: 18,
+                                        ),
+                                        label: const Text('Call'),
+                                        style: OutlinedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 8,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 24),
                   const Text(

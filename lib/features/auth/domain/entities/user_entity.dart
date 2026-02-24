@@ -10,11 +10,14 @@ class UserEntity extends Equatable {
   final String? fcmToken;
   final String? profileImageUrl;
 
+  final bool isBlocked;
+
   const UserEntity({
     required this.uid,
     required this.name,
     required this.email,
     required this.role,
+    this.isBlocked = false,
     this.fcmToken,
     this.profileImageUrl,
   });

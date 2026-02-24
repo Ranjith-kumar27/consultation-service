@@ -49,3 +49,21 @@ class LoadEarningsSummaryEvent extends DoctorEvent {
   @override
   List<Object?> get props => [doctorId];
 }
+
+class UpdateDoctorProfileEvent extends DoctorEvent {
+  final String? bio;
+  final String? specialization;
+
+  const UpdateDoctorProfileEvent({this.bio, this.specialization});
+
+  @override
+  List<Object?> get props => [bio, specialization];
+}
+
+class LoadDoctorInfoEvent extends DoctorEvent {
+  final String doctorId;
+  const LoadDoctorInfoEvent(this.doctorId);
+
+  @override
+  List<Object?> get props => [doctorId];
+}

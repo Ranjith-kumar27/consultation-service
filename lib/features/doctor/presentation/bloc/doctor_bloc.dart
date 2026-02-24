@@ -4,6 +4,10 @@ import '../../domain/usecases/manage_time_slots_usecase.dart';
 import '../../domain/usecases/get_doctor_bookings_usecase.dart';
 import '../../domain/usecases/update_booking_status_usecase.dart';
 import '../../domain/usecases/get_earnings_summary_usecase.dart';
+import '../../domain/usecases/get_doctor_info_usecase.dart';
+import '../../domain/usecases/update_doctor_profile_usecase.dart';
+import '../../../notification/domain/usecases/send_notification_usecase.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'doctor_event.dart';
 import 'doctor_state.dart';
 
@@ -14,6 +18,9 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
   final GetDoctorBookingsUseCase getDoctorBookingsUseCase;
   final UpdateBookingStatusUseCase updateBookingStatusUseCase;
   final GetEarningsSummaryUseCase getEarningsSummaryUseCase;
+  final GetDoctorInfoUseCase getDoctorInfoUseCase;
+  final UpdateDoctorProfileUseCase updateDoctorProfileUseCase;
+  final SendNotificationUseCase sendNotificationUseCase;
 
   DoctorBloc({
     required this.setAvailabilityUseCase,
@@ -21,6 +28,9 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
     required this.getDoctorBookingsUseCase,
     required this.updateBookingStatusUseCase,
     required this.getEarningsSummaryUseCase,
+    required this.getDoctorInfoUseCase,
+    required this.updateDoctorProfileUseCase,
+    required this.sendNotificationUseCase,
   }) : super(DoctorInitial()) {
     on<ToggleAvailabilityEvent>((event, emit) async {
       emit(DoctorLoading());
@@ -59,10 +69,19 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
           status: event.status,
         ),
       );
-      result.fold(
-        (failure) => emit(DoctorError(failure.message)),
-        (_) => emit(DoctorBookingStatusUpdated()),
-      );
+      result.fold((failure) => emit(DoctorError(failure.message)), (
+        appointment,
+      ) {
+        // Notify Patient
+        sendNotificationUseCase(
+          SendNotificationParams(
+            userId: appointment.patientId,
+            title: 'Booking Status Updated',
+            body: 'Your booking has been ${event.status.name}',
+          ),
+        );
+        emit(DoctorBookingStatusUpdated());
+      });
     });
 
     on<LoadEarningsSummaryEvent>((event, emit) async {
@@ -71,6 +90,35 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
       result.fold(
         (failure) => emit(DoctorError(failure.message)),
         (earnings) => emit(DoctorEarningsLoaded(earnings)),
+      );
+    });
+
+    on<UpdateDoctorProfileEvent>((event, emit) async {
+      emit(DoctorLoading());
+      final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      if (uid.isEmpty) {
+        emit(const DoctorError('No authenticated user found'));
+        return;
+      }
+      final result = await updateDoctorProfileUseCase(
+        UpdateDoctorProfileParams(
+          doctorId: uid,
+          bio: event.bio,
+          specialization: event.specialization,
+        ),
+      );
+      result.fold(
+        (failure) => emit(DoctorError(failure.message)),
+        (_) => emit(DoctorProfileUpdated()),
+      );
+    });
+
+    on<LoadDoctorInfoEvent>((event, emit) async {
+      emit(DoctorLoading());
+      final result = await getDoctorInfoUseCase(event.doctorId);
+      result.fold(
+        (failure) => emit(DoctorError(failure.message)),
+        (doctor) => emit(DoctorInfoLoaded(doctor)),
       );
     });
   }

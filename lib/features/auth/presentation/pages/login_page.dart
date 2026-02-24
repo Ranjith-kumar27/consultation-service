@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
+import '../../domain/entities/user_entity.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/custom_text_field.dart';
+import '../../../../core/widgets/wave_dot_loader.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -60,9 +63,6 @@ class _LoginPageState extends State<LoginPage> {
           }
         },
         builder: (context, state) {
-          if (state is AuthLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
           return SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
@@ -71,19 +71,21 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 60),
-                    Icon(
-                      Icons.local_hospital,
-                      size: 80,
-                      color: Theme.of(context).primaryColor,
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Lottie.asset(
+                        'assets/icons/heartbeat.json',
+                        // height: 200,
+                      ),
                     ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Welcome Back',
-                      style: Theme.of(context).textTheme.displayMedium,
-                      textAlign: TextAlign.center,
+                    const SizedBox(height: 10),
+                    Center(
+                      child: Lottie.asset(
+                        'assets/icons/welcome.json',
+                        height: 60,
+                      ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
                     Text(
                       'Sign in to continue to Doctor Consultation',
                       style: Theme.of(context).textTheme.bodyMedium,
@@ -111,14 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                     ElevatedButton(
                       onPressed: state is AuthLoading ? null : _login,
                       child: state is AuthLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
+                          ? const WaveDotLoader()
                           : const Text('Login'),
                     ),
                     const SizedBox(height: 24),
@@ -127,13 +122,13 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         const Text("Don't have an account?"),
                         TextButton(
-                          onPressed: () => context.go('/register-patient'),
+                          onPressed: () => context.push('/register-patient'),
                           child: const Text('Register Here'),
                         ),
                       ],
                     ),
                     TextButton(
-                      onPressed: () => context.go('/register-doctor'),
+                      onPressed: () => context.push('/register-doctor'),
                       child: const Text('Register as a Doctor'),
                     ),
                   ],

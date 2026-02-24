@@ -31,6 +31,8 @@ import '../../features/doctor/domain/usecases/manage_time_slots_usecase.dart';
 import '../../features/doctor/domain/usecases/get_doctor_bookings_usecase.dart';
 import '../../features/doctor/domain/usecases/update_booking_status_usecase.dart';
 import '../../features/doctor/domain/usecases/get_earnings_summary_usecase.dart';
+import '../../features/doctor/domain/usecases/get_doctor_info_usecase.dart';
+import '../../features/doctor/domain/usecases/update_doctor_profile_usecase.dart';
 import '../../features/doctor/presentation/bloc/doctor_bloc.dart';
 
 // Admin Imports
@@ -42,6 +44,7 @@ import '../../features/admin/domain/usecases/approve_doctor_usecase.dart';
 import '../../features/admin/domain/usecases/block_user_usecase.dart';
 import '../../features/admin/domain/usecases/get_all_bookings_usecase.dart';
 import '../../features/admin/domain/usecases/get_total_transactions_amount_usecase.dart';
+import '../../features/admin/domain/usecases/get_all_users_usecase.dart';
 import '../../features/admin/presentation/bloc/admin_bloc.dart';
 
 // Chat Imports
@@ -109,6 +112,7 @@ Future<void> init() async {
       getDoctorProfileUseCase: sl(),
       bookAppointmentUseCase: sl(),
       getPatientBookingsUseCase: sl(),
+      sendNotificationUseCase: sl(),
     ),
   );
 
@@ -137,6 +141,9 @@ Future<void> init() async {
       getDoctorBookingsUseCase: sl(),
       updateBookingStatusUseCase: sl(),
       getEarningsSummaryUseCase: sl(),
+      getDoctorInfoUseCase: sl(),
+      updateDoctorProfileUseCase: sl(),
+      sendNotificationUseCase: sl(),
     ),
   );
 
@@ -146,6 +153,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetDoctorBookingsUseCase(sl()));
   sl.registerLazySingleton(() => UpdateBookingStatusUseCase(sl()));
   sl.registerLazySingleton(() => GetEarningsSummaryUseCase(sl()));
+  sl.registerLazySingleton(() => GetDoctorInfoUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateDoctorProfileUseCase(sl()));
 
   // Repository
   sl.registerLazySingleton<DoctorRepository>(
@@ -166,6 +175,7 @@ Future<void> init() async {
       blockUserUseCase: sl(),
       getAllBookingsUseCase: sl(),
       getTotalTransactionsAmountUseCase: sl(),
+      getAllUsersUseCase: sl(),
     ),
   );
 
@@ -175,6 +185,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => BlockUserUseCase(sl()));
   sl.registerLazySingleton(() => GetAllBookingsUseCase(sl()));
   sl.registerLazySingleton(() => GetTotalTransactionsAmountUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllUsersUseCase(sl()));
 
   // Repository
   sl.registerLazySingleton<AdminRepository>(

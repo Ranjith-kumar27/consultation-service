@@ -37,9 +37,27 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
         );
       }
       final snapshot = await collection.get();
-      return snapshot.docs
-          .map((doc) => DoctorModel.fromFirestore(doc))
-          .toList();
+
+      // Fetch names from users collection
+      final doctors = await Future.wait(
+        snapshot.docs.map((doc) async {
+          final userDoc = await firestore.collection('users').doc(doc.id).get();
+          final userData = userDoc.data();
+          final name = userDoc.exists
+              ? (userData?['name'] ?? 'Doctor')
+              : 'Doctor';
+          return DoctorModel.fromFirestore(doc, name: name);
+        }),
+      );
+
+      // Search filtering by name if query is provided
+      if (query.isNotEmpty) {
+        return doctors
+            .where((d) => d.name.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+
+      return doctors;
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -48,12 +66,22 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
   @override
   Future<DoctorModel> getDoctorProfile(String doctorId) async {
     try {
-      final doc = await firestore
+      final docFuture = firestore
           .collection('doctors_info')
           .doc(doctorId)
           .get();
+      final userDocFuture = firestore.collection('users').doc(doctorId).get();
+
+      final results = await Future.wait([docFuture, userDocFuture]);
+      final doc = results[0] as DocumentSnapshot;
+      final userDoc = results[1] as DocumentSnapshot;
+
       if (!doc.exists) throw ServerException('Doctor not found');
-      return DoctorModel.fromFirestore(doc);
+
+      final name = userDoc.exists
+          ? ((userDoc.data() as Map<String, dynamic>?)?['name'] ?? 'Doctor')
+          : 'Doctor';
+      return DoctorModel.fromFirestore(doc, name: name);
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -67,17 +95,35 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
     DateTime endTime,
   ) async {
     try {
+      final userDoc = await firestore.collection('users').doc(doctorId).get();
+      final doctorName = userDoc.exists
+          ? (userDoc.data()?['name'] ?? 'Doctor')
+          : 'Doctor';
+
       // Calculate duration and amount
       final duration = endTime.difference(startTime).inMinutes;
-      final amount = duration * 2.0; // dummy 2 per min
+      final fee = userDoc.data()?['consultationFee'] ?? 0.0;
+      final amount = fee > 0
+          ? (duration / 30.0) * fee
+          : duration * 10.0; // Assuming 30 min slots or default
       final commission = amount * 0.15;
       final earning = amount - commission;
+
+      final patientDoc = await firestore
+          .collection('users')
+          .doc(patientId)
+          .get();
+      final patientName = patientDoc.exists
+          ? (patientDoc.data()?['name'] ?? 'Patient')
+          : 'Patient';
 
       final docRef = firestore.collection('appointments').doc();
       final model = AppointmentModel(
         id: docRef.id,
         doctorId: doctorId,
+        doctorName: doctorName,
         patientId: patientId,
+        patientName: patientName,
         startTime: startTime,
         endTime: endTime,
         durationMinutes: duration,
@@ -100,9 +146,15 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
           .collection('appointments')
           .where('patientId', isEqualTo: patientId)
           .get();
-      return snapshot.docs
-          .map((doc) => AppointmentModel.fromFirestore(doc))
-          .toList();
+
+      final bookings = await Future.wait(
+        snapshot.docs.map((doc) async {
+          final data = doc.data();
+          final dName = data['doctorName'] ?? 'Doctor';
+          return AppointmentModel.fromFirestore(doc, doctorName: dName);
+        }),
+      );
+      return bookings;
     } catch (e) {
       throw ServerException(e.toString());
     }

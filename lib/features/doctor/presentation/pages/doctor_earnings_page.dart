@@ -69,7 +69,7 @@ class _DoctorEarningsPageState extends State<DoctorEarningsPage> {
                         title: const Text('Consultation Payment'),
                         subtitle: Text('Feb ${23 - index}, 2026'),
                         trailing: const Text(
-                          '+\$45.00',
+                          '+₹45.00',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.success,
@@ -115,7 +115,7 @@ class _DoctorEarningsPageState extends State<DoctorEarningsPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            '\$${totalEarnings.toStringAsFixed(2)}',
+            '₹${totalEarnings.toStringAsFixed(2)}',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 36,
@@ -126,9 +126,9 @@ class _DoctorEarningsPageState extends State<DoctorEarningsPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildSimpleStat('Pending', '\$120.00'),
+              _buildSimpleStat('Pending', '₹120.00'),
               Container(width: 1, height: 40, color: Colors.white24),
-              _buildSimpleStat('Withdrawn', '\$850.00'),
+              _buildSimpleStat('Withdrawn', '₹850.00'),
             ],
           ),
           const SizedBox(height: 24),

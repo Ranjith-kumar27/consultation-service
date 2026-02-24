@@ -3,6 +3,7 @@ import '../../domain/usecases/get_doctors_usecase.dart';
 import '../../domain/usecases/get_doctor_profile_usecase.dart';
 import '../../domain/usecases/book_appointment_usecase.dart';
 import '../../domain/usecases/get_patient_bookings_usecase.dart';
+import '../../../notification/domain/usecases/send_notification_usecase.dart';
 import 'patient_event.dart';
 import 'patient_state.dart';
 
@@ -12,12 +13,14 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
   final GetDoctorProfileUseCase getDoctorProfileUseCase;
   final BookAppointmentUseCase bookAppointmentUseCase;
   final GetPatientBookingsUseCase getPatientBookingsUseCase;
+  final SendNotificationUseCase sendNotificationUseCase;
 
   PatientBloc({
     required this.getDoctorsUseCase,
     required this.getDoctorProfileUseCase,
     required this.bookAppointmentUseCase,
     required this.getPatientBookingsUseCase,
+    required this.sendNotificationUseCase,
   }) : super(PatientInitial()) {
     /// Handler for searching and fetching doctor lists.
     on<FetchDoctorsEvent>(_onFetchDoctors);
@@ -76,10 +79,19 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         endTime: event.endTime,
       ),
     );
-    result.fold(
-      (failure) => emit(PatientError(message: failure.message)),
-      (appointment) => emit(AppointmentBooked(appointment: appointment)),
-    );
+    result.fold((failure) => emit(PatientError(message: failure.message)), (
+      appointment,
+    ) {
+      // Notify Doctor
+      sendNotificationUseCase(
+        SendNotificationParams(
+          userId: event.doctorId,
+          title: 'New Booking Request',
+          body: 'You have a new appointment request for ${event.startTime}',
+        ),
+      );
+      emit(AppointmentBooked(appointment: appointment));
+    });
   }
 
   Future<void> _onFetchPatientBookings(

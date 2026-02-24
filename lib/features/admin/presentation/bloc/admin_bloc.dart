@@ -4,6 +4,7 @@ import '../../domain/usecases/approve_doctor_usecase.dart';
 import '../../domain/usecases/block_user_usecase.dart';
 import '../../domain/usecases/get_all_bookings_usecase.dart';
 import '../../domain/usecases/get_total_transactions_amount_usecase.dart';
+import '../../domain/usecases/get_all_users_usecase.dart';
 import '../../../../core/usecases/usecase.dart';
 import 'admin_event.dart';
 import 'admin_state.dart';
@@ -14,6 +15,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   final BlockUserUseCase blockUserUseCase;
   final GetAllBookingsUseCase getAllBookingsUseCase;
   final GetTotalTransactionsAmountUseCase getTotalTransactionsAmountUseCase;
+  final GetAllUsersUseCase getAllUsersUseCase;
 
   AdminBloc({
     required this.getPendingDoctorsUseCase,
@@ -21,6 +23,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     required this.blockUserUseCase,
     required this.getAllBookingsUseCase,
     required this.getTotalTransactionsAmountUseCase,
+    required this.getAllUsersUseCase,
   }) : super(AdminInitial()) {
     on<LoadPendingDoctorsEvent>((event, emit) async {
       emit(AdminLoading());
@@ -66,6 +69,15 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       result.fold(
         (failure) => emit(AdminError(failure.message)),
         (amount) => emit(TotalTransactionsLoaded(amount)),
+      );
+    });
+
+    on<LoadAllUsersEvent>((event, emit) async {
+      emit(AdminLoading());
+      final result = await getAllUsersUseCase(NoParams());
+      result.fold(
+        (failure) => emit(AdminError(failure.message)),
+        (users) => emit(AllUsersLoaded(users)),
       );
     });
   }

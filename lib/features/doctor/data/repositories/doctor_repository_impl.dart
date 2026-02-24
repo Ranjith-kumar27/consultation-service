@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../patient/domain/entities/appointment_entity.dart';
+import '../../domain/entities/doctor_entity.dart';
 import '../../domain/repositories/doctor_repository.dart';
 import '../datasources/doctor_remote_data_source.dart';
 
@@ -53,13 +54,16 @@ class DoctorRepositoryImpl implements DoctorRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateBookingStatus(
+  Future<Either<Failure, AppointmentEntity>> updateBookingStatus(
     String appointmentId,
     AppointmentStatus status,
   ) async {
     try {
-      await remoteDataSource.updateBookingStatus(appointmentId, status);
-      return const Right(null);
+      final appointment = await remoteDataSource.updateBookingStatus(
+        appointmentId,
+        status,
+      );
+      return Right(appointment);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
@@ -72,6 +76,38 @@ class DoctorRepositoryImpl implements DoctorRepository {
     try {
       final earnings = await remoteDataSource.getEarningsSummary(doctorId);
       return Right(earnings);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, DoctorEntity>> getDoctorInfo(String doctorId) async {
+    try {
+      final doctor = await remoteDataSource.getDoctorInfo(doctorId);
+      return Right(doctor);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateDoctorProfile(
+    String doctorId, {
+    String? bio,
+    String? specialization,
+  }) async {
+    try {
+      await remoteDataSource.updateDoctorProfile(
+        doctorId,
+        bio: bio,
+        specialization: specialization,
+      );
+      return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {

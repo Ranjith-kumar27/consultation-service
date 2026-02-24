@@ -20,6 +20,8 @@ abstract class AuthRepository {
     String email,
     String password,
     String specialization,
+    String location,
+    double consultationFee,
   );
 
   /// Logs out the current user.
@@ -27,4 +29,7 @@ abstract class AuthRepository {
 
   /// Retrieves the currently authenticated user.
   Future<Either<Failure, UserEntity>> getCurrentUser();
+
+  /// Updates the FCM token for a user.
+  Future<Either<Failure, void>> updateFcmToken(String userId, String token);
 }

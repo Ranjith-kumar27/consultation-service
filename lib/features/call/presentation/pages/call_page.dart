@@ -5,6 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../bloc/call_bloc.dart';
 import '../bloc/call_event.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class CallPage extends StatefulWidget {
   final String channelName;
@@ -36,7 +37,7 @@ class _CallPageState extends State<CallPage> {
     _engine = createAgoraRtcEngine();
     await _engine.initialize(
       const RtcEngineContext(
-        appId: "YOUR_AGORA_APP_ID", // TODO: Move to config
+        appId: AppConstants.agoraAppId,
         channelProfile: ChannelProfileType.channelProfileCommunication,
       ),
     );

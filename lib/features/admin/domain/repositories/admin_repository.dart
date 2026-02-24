@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
 import '../../../doctor/domain/entities/doctor_entity.dart';
 import '../../../patient/domain/entities/appointment_entity.dart';
+import '../../../auth/domain/entities/user_entity.dart';
 
 /// Repository interface for administrative operations.
 abstract class AdminRepository {
@@ -19,4 +20,7 @@ abstract class AdminRepository {
 
   /// Calculates the total amount of all transactions.
   Future<Either<Failure, double>> getTotalTransactionsAmount();
+
+  /// Retrieves all users (patients and doctors) for management.
+  Future<Either<Failure, List<UserEntity>>> getAllUsers();
 }

@@ -55,6 +55,8 @@ class AuthRepositoryImpl implements AuthRepository {
     String email,
     String password,
     String specialization,
+    String location,
+    double consultationFee,
   ) async {
     try {
       final userModel = await remoteDataSource.registerDoctor(
@@ -62,6 +64,8 @@ class AuthRepositoryImpl implements AuthRepository {
         email,
         password,
         specialization,
+        location,
+        consultationFee,
       );
       return Right(userModel);
     } on AuthException catch (e) {
@@ -90,6 +94,21 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(userModel);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateFcmToken(
+    String userId,
+    String token,
+  ) async {
+    try {
+      await remoteDataSource.updateFcmToken(userId, token);
+      return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {

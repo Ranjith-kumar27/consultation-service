@@ -18,6 +18,8 @@ class RegisterDoctorUseCase
       params.email,
       params.password,
       params.specialization,
+      params.location,
+      params.consultationFee,
     );
   }
 }
@@ -27,14 +29,25 @@ class RegisterDoctorParams extends Equatable {
   final String email;
   final String password;
   final String specialization;
+  final String location;
+  final double consultationFee;
 
   const RegisterDoctorParams({
     required this.name,
     required this.email,
     required this.password,
     required this.specialization,
+    required this.location,
+    required this.consultationFee,
   });
 
   @override
-  List<Object?> get props => [name, email, password, specialization];
+  List<Object?> get props => [
+    name,
+    email,
+    password,
+    specialization,
+    location,
+    consultationFee,
+  ];
 }

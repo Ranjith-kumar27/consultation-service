@@ -3,6 +3,7 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/register_doctor_usecase.dart';
 import '../../domain/usecases/register_patient_usecase.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -56,9 +57,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await loginUseCase(
       LoginParams(email: event.email, password: event.password),
     );
-    result.fold(
-      (failure) => emit(AuthError(message: failure.message)),
-      (user) => emit(Authenticated(user: user)),
+
+    await result.fold(
+      (failure) async {
+        emit(AuthError(message: failure.message));
+      },
+      (user) async {
+        final token = await FirebaseMessaging.instance.getToken();
+        if (token != null) {
+          await authRepository.updateFcmToken(user.uid, token);
+        }
+        emit(Authenticated(user: user));
+      },
     );
   }
 
@@ -75,9 +85,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password,
       ),
     );
-    result.fold(
-      (failure) => emit(AuthError(message: failure.message)),
-      (user) => emit(Authenticated(user: user)),
+
+    await result.fold(
+      (failure) async {
+        emit(AuthError(message: failure.message));
+      },
+      (user) async {
+        final token = await FirebaseMessaging.instance.getToken();
+        if (token != null) {
+          await authRepository.updateFcmToken(user.uid, token);
+        }
+        emit(Authenticated(user: user));
+      },
     );
   }
 
@@ -93,11 +112,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
         specialization: event.specialization,
+        location: event.location,
+        consultationFee: event.consultationFee,
       ),
     );
-    result.fold(
-      (failure) => emit(AuthError(message: failure.message)),
-      (user) => emit(Authenticated(user: user)),
+
+    await result.fold(
+      (failure) async {
+        emit(AuthError(message: failure.message));
+      },
+      (user) async {
+        final token = await FirebaseMessaging.instance.getToken();
+        if (token != null) {
+          await authRepository.updateFcmToken(user.uid, token);
+        }
+        emit(Authenticated(user: user));
+      },
     );
   }
 

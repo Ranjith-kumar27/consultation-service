@@ -6,13 +6,15 @@ import '../../../patient/domain/entities/appointment_entity.dart';
 import '../repositories/doctor_repository.dart';
 
 class UpdateBookingStatusUseCase
-    implements UseCase<void, UpdateBookingStatusParams> {
+    implements UseCase<AppointmentEntity, UpdateBookingStatusParams> {
   final DoctorRepository repository;
 
   UpdateBookingStatusUseCase(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(UpdateBookingStatusParams params) async {
+  Future<Either<Failure, AppointmentEntity>> call(
+    UpdateBookingStatusParams params,
+  ) async {
     return await repository.updateBookingStatus(
       params.appointmentId,
       params.status,

@@ -3,6 +3,7 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../doctor/domain/entities/doctor_entity.dart';
 import '../../../patient/domain/entities/appointment_entity.dart';
+import '../../../auth/domain/entities/user_entity.dart';
 import '../../domain/repositories/admin_repository.dart';
 import '../datasources/admin_remote_data_source.dart';
 
@@ -64,6 +65,18 @@ class AdminRepositoryImpl implements AdminRepository {
     try {
       final amount = await remoteDataSource.getTotalTransactionsAmount();
       return Right(amount);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<UserEntity>>> getAllUsers() async {
+    try {
+      final users = await remoteDataSource.getAllUsers();
+      return Right(users);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {

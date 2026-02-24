@@ -12,9 +12,12 @@ abstract class AuthRemoteDataSource {
     String email,
     String password,
     String specialization,
+    String location,
+    double consultationFee,
   );
   Future<void> logout();
   Future<UserModel> getCurrentUser();
+  Future<void> updateFcmToken(String userId, String token);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -80,12 +83,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         role: UserRole.patient,
       );
 
-      print('Firestore: Saving patient to "users" collection...');
-      await firestore
-          .collection('users')
-          .doc(userModel.uid)
-          .set(userModel.toFirestore());
-      print('Firestore: Patient saved successfully');
+      // Save profile to Firestore (non-blocking: if Firestore DB doesn't
+      // exist yet the Auth account still succeeded, so we navigate anyway).
+      try {
+        print('Firestore: Saving patient to "users" collection...');
+        await firestore
+            .collection('users')
+            .doc(userModel.uid)
+            .set(userModel.toFirestore());
+        print('Firestore: Patient saved successfully');
+      } catch (firestoreError) {
+        // Firestore write failed (e.g. database not yet created in Firebase
+        // Console). Log the warning but do NOT block registration navigation.
+        print(
+          'Firestore Warning: Could not save patient profile – $firestoreError. '
+          'Please create the Firestore database at '
+          'https://console.firebase.google.com/project/_/firestore',
+        );
+      }
 
       return userModel;
     } on FirebaseAuthException catch (e) {
@@ -103,6 +118,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String email,
     String password,
     String specialization,
+    String location,
+    double consultationFee,
   ) async {
     try {
       print('Firebase Auth: Creating doctor account for $email');
@@ -119,25 +136,38 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         role: UserRole.doctor,
       );
 
-      print('Firestore: Saving doctor to "users" collection...');
-      await firestore
-          .collection('users')
-          .doc(userModel.uid)
-          .set(userModel.toFirestore());
-      print('Firestore: Base user info saved');
+      // Save profile to Firestore (non-blocking: if Firestore DB doesn't
+      // exist yet the Auth account still succeeded, so we navigate anyway).
+      try {
+        print('Firestore: Saving doctor to "users" collection...');
+        await firestore
+            .collection('users')
+            .doc(userModel.uid)
+            .set(userModel.toFirestore());
+        print('Firestore: Base user info saved');
 
-      print(
-        'Firestore: Saving doctor metadata to "doctors_info" collection...',
-      );
-      // Also save to doctors_info
-      await firestore.collection('doctors_info').doc(userModel.uid).set({
-        'specialization': specialization,
-        'isApproved': false,
-        'isOnline': false,
-        'earnings': 0.0,
-        'commissionRate': 0.15,
-      });
-      print('Firestore: Doctor metadata saved successfully');
+        print(
+          'Firestore: Saving doctor metadata to "doctors_info" collection...',
+        );
+        await firestore.collection('doctors_info').doc(userModel.uid).set({
+          'specialization': specialization,
+          'isApproved': false,
+          'isOnline': false,
+          'earnings': 0.0,
+          'commissionRate': 0.15,
+          'location': location,
+          'consultationFee': consultationFee,
+        });
+        print('Firestore: Doctor metadata saved successfully');
+      } catch (firestoreError) {
+        // Firestore write failed (e.g. database not yet created in Firebase
+        // Console). Log the warning but do NOT block registration navigation.
+        print(
+          'Firestore Warning: Could not save doctor profile – $firestoreError. '
+          'Please create the Firestore database at '
+          'https://console.firebase.google.com/project/_/firestore',
+        );
+      }
 
       return userModel;
     } on FirebaseAuthException catch (e) {
@@ -158,8 +188,43 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel> getCurrentUser() async {
     final user = firebaseAuth.currentUser;
     if (user == null) throw AuthException('No user logged in.');
-    final doc = await firestore.collection('users').doc(user.uid).get();
-    if (!doc.exists) throw AuthException('User data not found.');
-    return UserModel.fromFirestore(doc);
+
+    try {
+      final doc = await firestore.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        return UserModel.fromFirestore(doc);
+      } else {
+        print(
+          'Firestore Warning: User document not found for UID: ${user.uid}',
+        );
+        // Fallback: create a basic user model from auth data
+        return UserModel(
+          uid: user.uid,
+          name: user.displayName ?? 'User',
+          email: user.email ?? '',
+          role: UserRole.patient, // Default to patient if unknown
+        );
+      }
+    } catch (e) {
+      print('Firestore Error in getCurrentUser: $e');
+      // Return a basic user model so the app doesn't crash
+      return UserModel(
+        uid: user.uid,
+        name: user.displayName ?? 'User',
+        email: user.email ?? '',
+        role: UserRole.patient,
+      );
+    }
+  }
+
+  @override
+  Future<void> updateFcmToken(String userId, String token) async {
+    try {
+      await firestore.collection('users').doc(userId).update({
+        'fcmToken': token,
+      });
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
   }
 }
