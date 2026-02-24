@@ -5,6 +5,7 @@ import '../../domain/usecases/get_chat_stream_usecase.dart';
 import '../../domain/usecases/send_message_usecase.dart';
 import '../../domain/usecases/mark_as_read_usecase.dart';
 import '../../domain/usecases/get_recent_chats_usecase.dart';
+import '../../../../features/notification/domain/usecases/send_notification_usecase.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
@@ -15,6 +16,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final SendMessageUseCase sendMessageUseCase;
   final MarkAsReadUseCase markAsReadUseCase;
   final GetRecentChatsUseCase getRecentChatsUseCase;
+  final SendNotificationUseCase sendNotificationUseCase;
   final AuthRepository authRepository;
 
   StreamSubscription? _chatSubscription;
@@ -25,6 +27,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     required this.sendMessageUseCase,
     required this.markAsReadUseCase,
     required this.getRecentChatsUseCase,
+    required this.sendNotificationUseCase,
     required this.authRepository,
   }) : super(ChatInitial()) {
     on<LoadMessagesEvent>((event, emit) async {
@@ -65,9 +68,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       );
 
       final result = await sendMessageUseCase(message);
-      result.fold((failure) => emit(ChatError(failure.message)), (_) {
-        // Do nothing. The Firestore stream will automatically push the new message
-        // via getChatStreamUseCase and the UI will update smoothly.
+      result.fold((failure) => emit(ChatError(failure.message)), (_) async {
+        final currentUser = authResult.fold((l) => null, (r) => r);
+        final senderName = currentUser?.name ?? "Someone";
+
+        await sendNotificationUseCase(
+          SendNotificationParams(
+            userId: event.receiverId,
+            title: "New message from $senderName",
+            body: event.text.length > 50
+                ? "${event.text.substring(0, 50)}..."
+                : event.text,
+            data: {'type': 'chat', 'senderId': currentUserId},
+          ),
+        );
       });
     });
 

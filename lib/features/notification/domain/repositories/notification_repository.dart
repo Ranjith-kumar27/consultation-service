@@ -8,6 +8,7 @@ abstract class NotificationRepository {
   Future<Either<Failure, void>> sendNotification(
     String userId,
     String title,
-    String body,
-  );
+    String body, {
+    Map<String, dynamic>? data,
+  });
 }

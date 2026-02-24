@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 import '../bloc/call_bloc.dart';
 import '../bloc/call_event.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -32,13 +33,22 @@ class _CallPageState extends State<CallPage> {
 
   Future<void> _initAgora() async {
     try {
+      debugPrint('[Agora] Starting initialization...');
       // Request permissions
-      await [Permission.microphone, Permission.camera].request();
+      final status = await [Permission.microphone, Permission.camera].request();
+      debugPrint('[Agora] Permissions status: $status');
 
-      if (AppConstants.agoraAppId == "YOUR_AGORA_APP_ID") {
+      if (AppConstants.agoraAppId == "YOUR_AGORA_APP_ID" ||
+          AppConstants.agoraAppId.isEmpty) {
+        debugPrint(
+          '[Agora] CRITICAL ERROR: Agora App ID is not configured correctly!',
+        );
         throw Exception("Agora App ID not configured correctly.");
       }
 
+      debugPrint(
+        '[Agora] Creating engine with App ID: ${AppConstants.agoraAppId}',
+      );
       // Create engine
       _engine = createAgoraRtcEngine();
       await _engine.initialize(
@@ -47,13 +57,69 @@ class _CallPageState extends State<CallPage> {
           channelProfile: ChannelProfileType.channelProfileCommunication,
         ),
       );
+      debugPrint('[Agora] Engine initialized successfully');
 
       _engine.registerEventHandler(
         RtcEngineEventHandler(
+          onError: (ErrorCodeType err, String msg) {
+            debugPrint('[Agora EVENT] onError: $err, msg: $msg');
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Agora Error: $err - $msg"),
+                  backgroundColor: Colors.red,
+                  duration: const Duration(seconds: 5),
+                ),
+              );
+            }
+          },
+          onConnectionStateChanged:
+              (
+                RtcConnection connection,
+                ConnectionStateType state,
+                ConnectionChangedReasonType reason,
+              ) {
+                debugPrint(
+                  '[Agora EVENT] onConnectionStateChanged: channel ${connection.channelId}, state $state, reason $reason',
+                );
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "Agora State: ${state.name} (${reason.name})",
+                      ),
+                      backgroundColor: Colors.blue,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
           onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+            debugPrint(
+              '[Agora EVENT] onJoinChannelSuccess: channel ${connection.channelId}, localUid: ${connection.localUid}',
+            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Joined channel: ${connection.channelId}"),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
             setState(() => _localUserJoined = true);
           },
           onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+            debugPrint(
+              '[Agora EVENT] onUserJoined: Remote user $remoteUid joined',
+            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Remote user joined: $remoteUid"),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
             setState(() => _remoteUid = remoteUid);
           },
           onUserOffline:
@@ -62,21 +128,48 @@ class _CallPageState extends State<CallPage> {
                 int remoteUid,
                 UserOfflineReasonType reason,
               ) {
+                debugPrint(
+                  '[Agora EVENT] onUserOffline: Remote user $remoteUid went offline, reason $reason',
+                );
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Remote user left: $remoteUid"),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                }
                 setState(() => _remoteUid = null);
                 _endCall();
               },
+          onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
+            debugPrint(
+              '[Agora EVENT] onTokenPrivilegeWillExpire: Token is about to expire!',
+            );
+          },
         ),
       );
 
+      debugPrint('[Agora] Enabling video and starting preview...');
       await _engine.enableVideo();
       await _engine.startPreview();
 
+      debugPrint(
+        '[Agora] Joining channel with channelId: ${widget.channelName}, uid: 0',
+      );
       await _engine.joinChannel(
-        token: "", // Get from state or backend
+        token: "",
         channelId: widget.channelName,
         uid: 0,
-        options: const ChannelMediaOptions(),
+        options: const ChannelMediaOptions(
+          clientRoleType: ClientRoleType.clientRoleBroadcaster,
+          autoSubscribeAudio: true,
+          autoSubscribeVideo: true,
+          publishMicrophoneTrack: true,
+          publishCameraTrack: true,
+        ),
       );
+      debugPrint('[Agora] joinChannel API call completed.');
     } catch (e) {
       debugPrint("Agora Error: $e");
       if (mounted) {
@@ -121,6 +214,7 @@ class _CallPageState extends State<CallPage> {
                         controller: VideoViewController(
                           rtcEngine: _engine,
                           canvas: const VideoCanvas(uid: 0),
+                          useFlutterTexture: true,
                         ),
                       )
                     : const CircularProgressIndicator(),
@@ -140,6 +234,7 @@ class _CallPageState extends State<CallPage> {
           rtcEngine: _engine,
           canvas: VideoCanvas(uid: _remoteUid),
           connection: RtcConnection(channelId: widget.channelName),
+          useFlutterTexture: true,
         ),
       );
     } else {

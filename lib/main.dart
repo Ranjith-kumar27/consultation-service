@@ -16,11 +16,31 @@ import 'features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
 import 'core/utils/responsive_config.dart';
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:convert';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
+}
+
+void _handleNotificationClick(Map<String, dynamic> data) {
+  if (data['type'] == 'call') {
+    final channelName = data['channelName'];
+    final callId = data['callId'];
+    if (channelName != null) {
+      String path = '/call/$channelName';
+      if (callId != null && callId.isNotEmpty) {
+        path += '?callId=$callId';
+      }
+      AppRouter.router.push(path);
+    }
+  } else if (data['type'] == 'chat') {
+    final senderId = data['senderId'];
+    final userName = 'User'; // Adjust if you pass senderName in payload
+    if (senderId != null) {
+      AppRouter.router.push('/chat/$senderId/$userName');
+    }
+  }
 }
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -35,11 +55,44 @@ void main() async {
 
   await di.init();
 
+  // Request notification permissions
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
   await flutterLocalNotificationsPlugin.initialize(
     settings: const InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/launcher_icon'),
     ),
+    onDidReceiveNotificationResponse: (NotificationResponse response) {
+      if (response.payload != null) {
+        try {
+          final data = jsonDecode(response.payload!) as Map<String, dynamic>;
+          _handleNotificationClick(data);
+        } catch (e) {
+          print("Error decoding payload: $e");
+        }
+      }
+    },
   );
+
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    _handleNotificationClick(message.data);
+  });
+
+  RemoteMessage? initialMessage = await FirebaseMessaging.instance
+      .getInitialMessage();
+  if (initialMessage != null) {
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      _handleNotificationClick(initialMessage.data);
+    });
+  }
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     RemoteNotification? notification = message.notification;
@@ -55,8 +108,11 @@ void main() async {
             'high_importance_channel', // id
             'High Importance Notifications', // title
             icon: '@mipmap/launcher_icon',
+            importance: Importance.max,
+            priority: Priority.high,
           ),
         ),
+        payload: jsonEncode(message.data),
       );
     }
   });

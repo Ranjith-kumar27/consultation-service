@@ -1,12 +1,18 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/services/fcm_messaging_service.dart';
 
 abstract class NotificationRemoteDataSource {
   Future<String?> getFcmToken();
   Future<void> subscribeToTopic(String topic);
   Future<void> unsubscribeFromTopic(String topic);
-  Future<void> sendNotification(String userId, String title, String body);
+  Future<void> sendNotification(
+    String userId,
+    String title,
+    String body, {
+    Map<String, dynamic>? data,
+  });
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
@@ -49,19 +55,25 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   Future<void> sendNotification(
     String userId,
     String title,
-    String body,
-  ) async {
-    // In a real production app, sending notifications would be done via a backend or Cloud Function
-    // for security reasons (don't want to expose FCM Server Key in the client).
-    // For now, we'll store the notification in a Firestore collection to be picked up by a function.
+    String body, {
+    Map<String, dynamic>? data,
+  }) async {
     try {
-      await firestore.collection('notifications_queue').add({
-        'userId': userId,
-        'title': title,
-        'body': body,
-        'timestamp': FieldValue.serverTimestamp(),
-        'status': 'pending',
-      });
+      final userDoc = await firestore.collection('users').doc(userId).get();
+      if (!userDoc.exists) return;
+
+      final userData = userDoc.data();
+      if (userData == null || !userData.containsKey('fcmToken')) return;
+
+      final fcmToken = userData['fcmToken'] as String?;
+      if (fcmToken == null || fcmToken.isEmpty) return;
+
+      await FcmMessagingService.sendPushNotification(
+        fcmToken: fcmToken,
+        title: title,
+        body: body,
+        data: data,
+      );
     } catch (e) {
       throw ServerException(e.toString());
     }

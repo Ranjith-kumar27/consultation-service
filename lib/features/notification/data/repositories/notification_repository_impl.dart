@@ -43,10 +43,11 @@ class NotificationRepositoryImpl implements NotificationRepository {
   Future<Either<Failure, void>> sendNotification(
     String userId,
     String title,
-    String body,
-  ) async {
+    String body, {
+    Map<String, dynamic>? data,
+  }) async {
     try {
-      await remoteDataSource.sendNotification(userId, title, body);
+      await remoteDataSource.sendNotification(userId, title, body, data: data);
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));

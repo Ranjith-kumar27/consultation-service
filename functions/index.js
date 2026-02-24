@@ -1,7 +1,56 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const { RtcTokenBuilder, RtcRole } = require("agora-token");
 
 admin.initializeApp();
+
+const AGORA_APP_ID = "07b1a1ea49e8415a80ae05519229b6ca";
+const AGORA_APP_CERTIFICATE = "1c3e0f822e384eb6a26c2ba33206f0b8";
+
+// Generate Agora Token for Video Call
+exports.generateAgoraToken = functions.https.onCall((data, context) => {
+  // Check if user is authenticated
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "unauthenticated",
+      "The function must be called while authenticated."
+    );
+  }
+
+  const channelName = data.channelName;
+  if (!channelName) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "The function must be called with a channelName."
+    );
+  }
+
+  const uid = 0; // Set to 0 if we want it to be dynamic for all users in the channel
+  const role = RtcRole.PUBLISHER;
+  const privilegeExpirationInSeconds = 3600; // 1 hour
+
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  const privilegeExpiredTs = currentTimestamp + privilegeExpirationInSeconds;
+
+  try {
+    const token = RtcTokenBuilder.buildTokenWithUid(
+      AGORA_APP_ID,
+      AGORA_APP_CERTIFICATE,
+      channelName,
+      uid,
+      role,
+      privilegeExpiredTs
+    );
+
+    return { token };
+  } catch (error) {
+    console.error("Error generating Agora token:", error);
+    throw new functions.https.HttpsError(
+      "internal",
+      "Failed to generate Agora token."
+    );
+  }
+});
 
 // Trigger for new Chat Messages
 exports.sendChatNotification = functions.firestore
@@ -45,10 +94,10 @@ exports.sendChatNotification = functions.firestore
         .collection("users")
         .doc(senderId)
         .get();
-      
+
       let senderName = "Someone";
       if (senderDoc.exists) {
-         senderName = senderDoc.data().name || "Someone";
+        senderName = senderDoc.data().name || "Someone";
       }
 
       // 3. Construct Payload
@@ -86,63 +135,63 @@ exports.sendCallNotification = functions.firestore
     const callerId = callData.callerId;
     const receiverId = callData.receiverId;
     const channelName = callData.channelName;
-    
+
     try {
-       // 1. Fetch recipient user data
-       const receiverDoc = await admin
-       .firestore()
-       .collection("users")
-       .doc(receiverId)
-       .get();
+      // 1. Fetch recipient user data
+      const receiverDoc = await admin
+        .firestore()
+        .collection("users")
+        .doc(receiverId)
+        .get();
 
-     if (!receiverDoc.exists) {
-       console.log(`No user found for receiver ID: ${receiverId}`);
-       return null;
-     }
+      if (!receiverDoc.exists) {
+        console.log(`No user found for receiver ID: ${receiverId}`);
+        return null;
+      }
 
-     const receiverData = receiverDoc.data();
-     const fcmToken = receiverData.fcmToken;
+      const receiverData = receiverDoc.data();
+      const fcmToken = receiverData.fcmToken;
 
-     if (!fcmToken) {
-       console.log(`No FCM token available for user ${receiverId}`);
-       return null;
-     }
+      if (!fcmToken) {
+        console.log(`No FCM token available for user ${receiverId}`);
+        return null;
+      }
 
-     // 2. Fetch caller user data
-     const callerDoc = await admin
-       .firestore()
-       .collection("users")
-       .doc(callerId)
-       .get();
-     
-     let callerName = "Someone";
-     if (callerDoc.exists) {
+      // 2. Fetch caller user data
+      const callerDoc = await admin
+        .firestore()
+        .collection("users")
+        .doc(callerId)
+        .get();
+
+      let callerName = "Someone";
+      if (callerDoc.exists) {
         callerName = callerDoc.data().name || "Someone";
-     }
+      }
 
-     // 3. Construct Payload
-     const payload = {
-       notification: {
-         title: `Incoming Video Call`,
-         body: `${callerName} is calling you...`,
-         sound: "default", // You might want a ringing sound here ideally
-       },
-       data: {
-         type: "call",
-         callerId: callerId,
-         channelName: channelName,
-         callId: context.params.callId
-       },
-       token: fcmToken,
-     };
+      // 3. Construct Payload
+      const payload = {
+        notification: {
+          title: `Incoming Video Call`,
+          body: `${callerName} is calling you...`,
+          sound: "default", // You might want a ringing sound here ideally
+        },
+        data: {
+          type: "call",
+          callerId: callerId,
+          channelName: channelName,
+          callId: context.params.callId
+        },
+        token: fcmToken,
+      };
 
-     // 4. Send Notification
-     const response = await admin.messaging().send(payload);
-     console.log("Successfully sent call notification:", response);
-     return response;
+      // 4. Send Notification
+      const response = await admin.messaging().send(payload);
+      console.log("Successfully sent call notification:", response);
+      return response;
 
     } catch (error) {
-        console.error("Error sending call notification:", error);
-        return null;
+      console.error("Error sending call notification:", error);
+      return null;
     }
   });

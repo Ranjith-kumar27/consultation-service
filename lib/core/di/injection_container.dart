@@ -206,6 +206,7 @@ Future<void> init() async {
       sendMessageUseCase: sl(),
       markAsReadUseCase: sl(),
       getRecentChatsUseCase: sl(),
+      sendNotificationUseCase: sl(),
       authRepository: sl(),
     ),
   );
@@ -233,6 +234,8 @@ Future<void> init() async {
       initializeCallUseCase: sl(),
       startCallUseCase: sl(),
       endCallUseCase: sl(),
+      sendNotificationUseCase: sl(),
+      authRepository: sl(),
     ),
   );
 

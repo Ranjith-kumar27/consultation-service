@@ -15,6 +15,7 @@ class SendNotificationUseCase implements UseCase<void, SendNotificationParams> {
       params.userId,
       params.title,
       params.body,
+      data: params.data,
     );
   }
 }
@@ -23,13 +24,15 @@ class SendNotificationParams extends Equatable {
   final String userId;
   final String title;
   final String body;
+  final Map<String, dynamic>? data;
 
   const SendNotificationParams({
     required this.userId,
     required this.title,
     required this.body,
+    this.data,
   });
 
   @override
-  List<Object?> get props => [userId, title, body];
+  List<Object?> get props => [userId, title, body, data];
 }
