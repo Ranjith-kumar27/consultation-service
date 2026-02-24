@@ -6,6 +6,7 @@ import '../bloc/call_bloc.dart';
 import '../bloc/call_event.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class CallPage extends StatefulWidget {
   final String channelName;
@@ -112,8 +113,8 @@ class _CallPageState extends State<CallPage> {
           Align(
             alignment: Alignment.topLeft,
             child: SizedBox(
-              width: 100,
-              height: 150,
+              width: 100.rw,
+              height: 150.rh,
               child: Center(
                 child: _localUserJoined
                     ? AgoraVideoView(
@@ -142,9 +143,9 @@ class _CallPageState extends State<CallPage> {
         ),
       );
     } else {
-      return const Text(
+      return Text(
         'Waiting for remote user...',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white, fontSize: 16.rt),
       );
     }
   }
@@ -152,7 +153,7 @@ class _CallPageState extends State<CallPage> {
   Widget _toolbar() {
     return Container(
       alignment: Alignment.bottomCenter,
-      padding: const EdgeInsets.symmetric(vertical: 48),
+      padding: EdgeInsets.symmetric(vertical: 48.rh),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -164,11 +165,11 @@ class _CallPageState extends State<CallPage> {
             shape: const CircleBorder(),
             elevation: 2.0,
             fillColor: _muted ? AppColors.primary : Colors.white,
-            padding: const EdgeInsets.all(12.0),
+            padding: EdgeInsets.all(12.rw),
             child: Icon(
               _muted ? Icons.mic_off : Icons.mic,
               color: _muted ? Colors.white : AppColors.primary,
-              size: 20.0,
+              size: 20.rt,
             ),
           ),
           RawMaterialButton(
@@ -176,19 +177,19 @@ class _CallPageState extends State<CallPage> {
             shape: const CircleBorder(),
             elevation: 2.0,
             fillColor: Colors.redAccent,
-            padding: const EdgeInsets.all(15.0),
-            child: const Icon(Icons.call_end, color: Colors.white, size: 35.0),
+            padding: EdgeInsets.all(15.rw),
+            child: Icon(Icons.call_end, color: Colors.white, size: 35.rt),
           ),
           RawMaterialButton(
             onPressed: () => _engine.switchCamera(),
             shape: const CircleBorder(),
             elevation: 2.0,
             fillColor: Colors.white,
-            padding: const EdgeInsets.all(12.0),
-            child: const Icon(
+            padding: EdgeInsets.all(12.rw),
+            child: Icon(
               Icons.switch_camera,
               color: AppColors.primary,
-              size: 20.0,
+              size: 20.rt,
             ),
           ),
         ],

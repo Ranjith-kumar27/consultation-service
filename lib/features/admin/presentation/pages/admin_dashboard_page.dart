@@ -11,6 +11,7 @@ import '../../../auth/presentation/bloc/auth_event.dart';
 
 import '../../../patient/domain/entities/appointment_entity.dart';
 import '../../../auth/domain/entities/user_entity.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -99,12 +100,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         return const Center(child: Text('No pending approvals.'));
       }
       return ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.rw),
         itemCount: state.doctors.length,
         itemBuilder: (context, index) {
           final doctor = state.doctors[index];
           return Card(
-            margin: const EdgeInsets.only(bottom: 12),
+            margin: EdgeInsets.only(bottom: 12.rh),
             child: ListTile(
               title: Text(doctor.name),
               subtitle: Text(doctor.specialization),
@@ -114,7 +115,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16.rw),
                 ),
                 child: const Text('Approve'),
               ),
@@ -132,19 +133,19 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         return const Center(child: Text('No bookings found.'));
       }
       return ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.rw),
         itemCount: state.bookings.length,
         itemBuilder: (context, index) {
           final booking = state.bookings[index];
           return Card(
-            margin: const EdgeInsets.only(bottom: 12),
+            margin: EdgeInsets.only(bottom: 12.rh),
             child: ListTile(
               title: Text(
                 'Dr. ${booking.doctorName} | Patient: ${booking.patientName}',
               ),
               subtitle: Text(
                 'Status: ${booking.status.name} | Amount: ₹${booking.totalAmount}',
-                style: const TextStyle(fontSize: 12),
+                style: TextStyle(fontSize: 12.rt),
               ),
               trailing: Icon(
                 _getStatusIcon(booking.status),
@@ -168,7 +169,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.rw),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -180,7 +181,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             Icons.account_balance_wallet,
             AppColors.primary,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.rh),
           _buildMetricCard(
             'Total Platform Commission (15%)',
             state is TotalTransactionsLoaded
@@ -189,16 +190,16 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             Icons.percent,
             AppColors.success,
           ),
-          const SizedBox(height: 32),
-          const Text(
+          SizedBox(height: 32.rh),
+          Text(
             'Recent Transactions',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 18.rt,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.rh),
           if (bookings.isEmpty)
             const EmptyState(
               title: 'No Transactions',
@@ -216,11 +217,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   Widget _buildTransactionItem(AppointmentEntity booking) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 12.rh),
+      padding: EdgeInsets.all(16.rw),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: AppColors.divider),
       ),
       child: Row(
@@ -235,8 +236,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               ),
               Text(
                 'Patient: ${booking.patientName}',
-                style: const TextStyle(
-                  fontSize: 12,
+                style: TextStyle(
+                  fontSize: 12.rt,
                   color: AppColors.textSecondary,
                 ),
               ),
@@ -254,7 +255,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               ),
               Text(
                 'Comm: ₹${(booking.totalAmount * 0.15).toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 10, color: AppColors.success),
+                style: TextStyle(fontSize: 10.rt, color: AppColors.success),
               ),
             ],
           ),
@@ -276,13 +277,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         );
       }
       return ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.rw),
         itemCount: state.users.length,
         itemBuilder: (context, index) {
           final user = state.users[index];
           if (user.role == UserRole.admin) return const SizedBox.shrink();
           return Card(
-            margin: const EdgeInsets.only(bottom: 12),
+            margin: EdgeInsets.only(bottom: 12.rh),
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: user.role == UserRole.doctor
@@ -297,7 +298,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               subtitle: Text('${user.role.name.toUpperCase()} | ${user.email}'),
               trailing: Switch(
                 value: !user.isBlocked,
-                activeColor: AppColors.success,
+                activeThumbColor: AppColors.success,
                 inactiveThumbColor: AppColors.error,
                 onChanged: (value) {
                   context.read<AdminBloc>().add(
@@ -321,30 +322,27 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   ) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.rw),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         border: Border.all(color: color.withOpacity(0.2)),
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 40),
-          const SizedBox(height: 12),
+          Icon(icon, color: color, size: 40.rt),
+          SizedBox(height: 12.rh),
           Text(
             value,
             style: TextStyle(
-              fontSize: 32,
+              fontSize: 32.rt,
               fontWeight: FontWeight.bold,
               color: color,
             ),
           ),
           Text(
             title,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 16.rt),
           ),
         ],
       ),

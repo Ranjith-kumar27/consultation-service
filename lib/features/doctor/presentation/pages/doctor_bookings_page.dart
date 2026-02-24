@@ -8,6 +8,7 @@ import '../bloc/doctor_event.dart';
 import '../bloc/doctor_state.dart';
 import '../../../patient/domain/entities/appointment_entity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class DoctorBookingsPage extends StatefulWidget {
   const DoctorBookingsPage({super.key});
@@ -53,7 +54,7 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
               );
             }
             return ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.rw),
               itemCount: state.bookings.length,
               itemBuilder: (context, index) {
                 final booking = state.bookings[index];
@@ -72,11 +73,11 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
 
   Widget _buildBookingCard(AppointmentEntity booking) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 16.rh),
+      padding: EdgeInsets.all(16.rw),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -93,31 +94,31 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
             children: [
               Text(
                 booking.patientName,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 16.rt,
                   color: AppColors.textPrimary,
                 ),
               ),
               _buildStatusBadge(booking.status),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.rh),
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.access_time,
-                size: 16,
+                size: 16.rt,
                 color: AppColors.textSecondary,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8.rw),
               Text(
                 '${booking.startTime.hour}:${booking.startTime.minute.toString().padLeft(2, '0')}',
                 style: const TextStyle(color: AppColors.textSecondary),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.rh),
           if (booking.status == AppointmentStatus.pending)
             Row(
               children: [
@@ -138,7 +139,7 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
                     child: const Text('Reject'),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.rw),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
@@ -157,7 +158,7 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
           if (booking.status == AppointmentStatus.confirmed ||
               booking.status == AppointmentStatus.completed)
             Padding(
-              padding: const EdgeInsets.only(top: 12.0),
+              padding: EdgeInsets.only(top: 12.rh),
               child: Row(
                 children: [
                   Expanded(
@@ -167,7 +168,7 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
                           '/chat/${booking.patientId}/${booking.patientName}',
                         );
                       },
-                      icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                      icon: Icon(Icons.chat_bubble_outline, size: 18.rt),
                       label: const Text('Chat'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
@@ -175,7 +176,7 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8.rw),
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () {
@@ -185,7 +186,7 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
                         ]..sort();
                         context.push('/call/${channelName.join('_')}');
                       },
-                      icon: const Icon(Icons.videocam_outlined, size: 18),
+                      icon: Icon(Icons.videocam_outlined, size: 18.rt),
                       label: const Text('Call'),
                     ),
                   ),
@@ -215,16 +216,16 @@ class _DoctorBookingsPageState extends State<DoctorBookingsPage> {
         break;
     }
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 12.rw, vertical: 4.rh),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
         status.name.toUpperCase(),
         style: TextStyle(
           color: color,
-          fontSize: 10,
+          fontSize: 10.rt,
           fontWeight: FontWeight.bold,
         ),
       ),

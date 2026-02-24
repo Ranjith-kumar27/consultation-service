@@ -12,6 +12,7 @@ import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../patient/domain/entities/appointment_entity.dart';
 import '../../../../core/widgets/shimmer_loaders.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class DoctorDashboardPage extends StatefulWidget {
   const DoctorDashboardPage({super.key});
@@ -118,20 +119,20 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
           }
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.rw),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (state is DoctorLoading) ...[
                   const ShimmerCardLoading(),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.rh),
                   const ShimmerCardLoading(),
                 ] else ...[
                   if (!_isApproved) _buildPendingApprovalBanner(),
-                  if (!_isApproved) const SizedBox(height: 16),
+                  if (!_isApproved) SizedBox(height: 16.rh),
                   _buildAvailabilityCard(),
                 ],
-                const SizedBox(height: 20),
+                SizedBox(height: 20.rh),
                 state is DoctorLoading
                     ? const ShimmerListLoading(itemCount: 4)
                     : _buildStatsGrid(
@@ -139,18 +140,18 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
                         pendingCount,
                         completedCount,
                       ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.rh),
                 _buildRecentBookings(state),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.rh),
                 Text(
                   'Quick Actions',
                   style: GoogleFonts.inter(
-                    fontSize: 20,
+                    fontSize: 20.rt,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.rh),
                 _buildActionButtons(),
               ],
             ),
@@ -162,16 +163,16 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
 
   Widget _buildPendingApprovalBanner() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.rw),
       decoration: BoxDecoration(
         color: AppColors.warning.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: AppColors.warning),
       ),
       child: Row(
         children: [
           const Icon(Icons.info_outline, color: AppColors.warning),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.rw),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +187,7 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
                 Text(
                   'You will appear in search results once an admin approves your profile.',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 12.rt,
                     color: AppColors.textSecondary,
                   ),
                 ),
@@ -218,7 +219,7 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
             Text(
               'Upcoming Appointments',
               style: GoogleFonts.inter(
-                fontSize: 20,
+                fontSize: 20.rt,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
@@ -236,13 +237,13 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
               ),
           ],
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.rh),
         if (recentBookings.isEmpty)
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.rw),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20.r),
               border: Border.all(color: AppColors.divider.withOpacity(0.5)),
             ),
             child: Row(
@@ -251,12 +252,12 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
                   Icons.calendar_today_outlined,
                   color: AppColors.textSecondary.withOpacity(0.5),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.rw),
                 Text(
                   'No upcoming appointments today',
                   style: GoogleFonts.inter(
                     color: AppColors.textSecondary,
-                    fontSize: 14,
+                    fontSize: 14.rt,
                   ),
                 ),
               ],
@@ -270,11 +271,11 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
 
   Widget _buildBookingCard(AppointmentEntity booking) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 12.rh),
+      padding: EdgeInsets.all(16.rw),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -287,14 +288,14 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(12.rw),
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.person, color: AppColors.primary, size: 20),
+            child: Icon(Icons.person, color: AppColors.primary, size: 20.rt),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.rw),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,31 +305,31 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
                   style: GoogleFonts.inter(
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
-                    fontSize: 15,
+                    fontSize: 15.rt,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2.rh),
                 Text(
                   '${DateFormat.jm().format(booking.startTime)} - ${DateFormat.yMMMd().format(booking.startTime)}',
                   style: GoogleFonts.inter(
                     color: AppColors.textSecondary,
-                    fontSize: 12,
+                    fontSize: 12.rt,
                   ),
                 ),
               ],
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: EdgeInsets.symmetric(horizontal: 10.rw, vertical: 4.rh),
             decoration: BoxDecoration(
               color: AppColors.success.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.r),
             ),
             child: Text(
               booking.status.name.toUpperCase(),
               style: GoogleFonts.inter(
                 color: AppColors.success,
-                fontSize: 10,
+                fontSize: 10.rt,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -340,12 +341,12 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
 
   Widget _buildAvailabilityCard() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.rw),
       decoration: BoxDecoration(
         color: _isOnline
             ? AppColors.success.withOpacity(0.1)
             : AppColors.divider.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
           color: _isOnline ? AppColors.success : AppColors.divider,
         ),
@@ -356,9 +357,9 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
             backgroundColor: _isOnline
                 ? AppColors.success
                 : AppColors.textSecondary,
-            radius: 8,
+            radius: 8.r,
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.rw),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -376,9 +377,9 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
                   _isOnline
                       ? 'Active for consultations'
                       : 'Not accepting consultations',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
-                    fontSize: 12,
+                    fontSize: 12.rt,
                   ),
                 ),
               ],
@@ -401,9 +402,9 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
-      crossAxisSpacing: 16,
-      mainAxisSpacing: 16,
-      childAspectRatio: 1.5,
+      crossAxisSpacing: 16.rw,
+      mainAxisSpacing: 16.rh,
+      childAspectRatio: 1.35,
       children: [
         _buildStatCard(
           'Total Earnings',
@@ -435,10 +436,10 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
     Color color,
   ) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(16.rw),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.08),
@@ -453,28 +454,32 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(8.rw),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: Icon(icon, color: color, size: 20.rt),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
-                  fontSize: 22,
+                  fontSize: 22.rt,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
               Text(
                 title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
-                  fontSize: 12,
+                  fontSize: 12.rt,
                   color: AppColors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
@@ -495,21 +500,21 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
           Icons.calendar_month,
           () => context.push('/doctor/bookings'),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.rh),
         _buildActionButton(
           'Manage Slots',
           'Edit your availability schedule',
           Icons.access_time,
           () => context.push('/doctor/slots'),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.rh),
         _buildActionButton(
           'Earnings History',
           'View transactions and payouts',
           Icons.payments_outlined,
           () => context.push('/doctor/earnings'),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.rh),
         _buildActionButton(
           'Profile Settings',
           'Update your bio and price',
@@ -527,15 +532,15 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
     VoidCallback onTap,
   ) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: 16.rh),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.rw),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20.r),
             border: Border.all(color: const Color(0xFFF1F5F9)),
             boxShadow: [
               BoxShadow(
@@ -548,14 +553,14 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(12.rw),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16.r),
                 ),
-                child: Icon(icon, color: AppColors.primary, size: 24),
+                child: Icon(icon, color: AppColors.primary, size: 24.rt),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16.rw),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -565,30 +570,30 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage> {
                       style: GoogleFonts.inter(
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
-                        fontSize: 16,
+                        fontSize: 16.rt,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2.rh),
                     Text(
                       subtitle,
                       style: GoogleFonts.inter(
                         color: AppColors.textSecondary,
-                        fontSize: 13,
+                        fontSize: 13.rt,
                       ),
                     ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(6),
+                padding: EdgeInsets.all(6.rw),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.chevron_right,
                   color: AppColors.textSecondary,
-                  size: 20,
+                  size: 20.rt,
                 ),
               ),
             ],

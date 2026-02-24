@@ -9,6 +9,7 @@ import '../widgets/message_input.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../../core/di/injection_container.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class ChatPage extends StatefulWidget {
   final String otherUserId;
@@ -92,7 +93,7 @@ class _ChatPageState extends State<ChatPage> {
                   }
                   return ListView.builder(
                     reverse: true,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: EdgeInsets.symmetric(vertical: 16.rh),
                     itemCount: state.messages.length,
                     itemBuilder: (context, index) {
                       final message = state.messages[index];

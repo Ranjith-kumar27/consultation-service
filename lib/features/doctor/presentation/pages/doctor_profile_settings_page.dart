@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class DoctorProfileSettingsPage extends StatefulWidget {
   const DoctorProfileSettingsPage({super.key});
@@ -74,7 +75,7 @@ class _DoctorProfileSettingsPageState extends State<DoctorProfileSettingsPage> {
         },
         builder: (context, state) {
           return Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.rw),
             child: Column(
               children: [
                 TextField(
@@ -84,7 +85,7 @@ class _DoctorProfileSettingsPageState extends State<DoctorProfileSettingsPage> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.rh),
                 TextField(
                   controller: _bioController,
                   maxLines: 4,
@@ -93,7 +94,7 @@ class _DoctorProfileSettingsPageState extends State<DoctorProfileSettingsPage> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.rh),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

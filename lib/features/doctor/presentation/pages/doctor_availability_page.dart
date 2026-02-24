@@ -4,6 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../bloc/doctor_bloc.dart';
 import '../bloc/doctor_event.dart';
 import '../bloc/doctor_state.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class DoctorAvailabilityPage extends StatefulWidget {
   const DoctorAvailabilityPage({super.key});
@@ -39,33 +40,32 @@ class _DoctorAvailabilityPageState extends State<DoctorAvailabilityPage> {
         },
         builder: (context, state) {
           return Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.rw),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Select Available Time Slots',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 20.rt,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.rh),
                 const Text(
                   'Choose the hours you are available for consultations today.',
                   style: TextStyle(color: AppColors.textSecondary),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.rh),
                 Expanded(
                   child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 2.2,
-                        ),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 12.rw,
+                      mainAxisSpacing: 12.rh,
+                      childAspectRatio: 2.2,
+                    ),
                     itemCount: _timeSlots.length,
                     itemBuilder: (context, index) {
                       final slot = _timeSlots[index];
@@ -86,7 +86,7 @@ class _DoctorAvailabilityPageState extends State<DoctorAvailabilityPage> {
                             color: isSelected
                                 ? AppColors.primary
                                 : AppColors.surface,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
                               color: isSelected
                                   ? AppColors.primary
@@ -109,7 +109,7 @@ class _DoctorAvailabilityPageState extends State<DoctorAvailabilityPage> {
                     },
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.rh),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

@@ -5,6 +5,7 @@ import '../bloc/doctor_bloc.dart';
 import '../bloc/doctor_event.dart';
 import '../bloc/doctor_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class DoctorEarningsPage extends StatefulWidget {
   const DoctorEarningsPage({super.key});
@@ -34,23 +35,23 @@ class _DoctorEarningsPageState extends State<DoctorEarningsPage> {
           }
           if (state is DoctorEarningsLoaded) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.rw),
               child: Column(
                 children: [
                   _buildEarningsCard(state.earnings),
-                  const SizedBox(height: 24),
-                  const Align(
+                  SizedBox(height: 24.rh),
+                  Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Transaction History',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 18.rt,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.rh),
                   // Placeholder for transactions
                   ListView.separated(
                     shrinkWrap: true,
@@ -91,14 +92,14 @@ class _DoctorEarningsPageState extends State<DoctorEarningsPage> {
   Widget _buildEarningsCard(double totalEarnings) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.rw),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [AppColors.primary, AppColors.primaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withOpacity(0.3),
@@ -109,29 +110,29 @@ class _DoctorEarningsPageState extends State<DoctorEarningsPage> {
       ),
       child: Column(
         children: [
-          const Text(
+          Text(
             'Total Wallet Balance',
-            style: TextStyle(color: Colors.white70, fontSize: 16),
+            style: TextStyle(color: Colors.white70, fontSize: 16.rt),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.rh),
           Text(
             '₹${totalEarnings.toStringAsFixed(2)}',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 36,
+              fontSize: 36.rt,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.rh),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildSimpleStat('Pending', '₹120.00'),
-              Container(width: 1, height: 40, color: Colors.white24),
+              Container(width: 1.rw, height: 40.rh, color: Colors.white24),
               _buildSimpleStat('Withdrawn', '₹850.00'),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.rh),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -153,15 +154,15 @@ class _DoctorEarningsPageState extends State<DoctorEarningsPage> {
       children: [
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: 18.rt,
           ),
         ),
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
+          style: TextStyle(color: Colors.white70, fontSize: 12.rt),
         ),
       ],
     );

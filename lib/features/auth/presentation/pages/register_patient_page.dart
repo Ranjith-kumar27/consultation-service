@@ -7,6 +7,7 @@ import '../bloc/auth_state.dart';
 import '../widgets/custom_text_field.dart';
 import '../../../../core/widgets/wave_dot_loader.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/responsive_config.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterPatientPage extends StatefulWidget {
@@ -49,7 +50,7 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                 backgroundColor: AppColors.error,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
               ),
             );
@@ -58,32 +59,32 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
         builder: (context, state) {
           return SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              padding: EdgeInsets.symmetric(horizontal: 30.rw),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40.rh),
                     Text(
                       'Create Patient Account',
                       style: GoogleFonts.inter(
-                        fontSize: 28,
+                        fontSize: 28.rt,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.rh),
                     Text(
                       'Join our healthcare community today',
                       style: GoogleFonts.inter(
-                        fontSize: 16,
+                        fontSize: 16.rt,
                         color: AppColors.textSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40.rh),
                     CustomTextField(
                       controller: _nameController,
                       labelText: 'Full Name',
@@ -91,7 +92,7 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                       validator: (v) =>
                           v!.isEmpty ? 'Please enter your name' : null,
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.rh),
                     CustomTextField(
                       controller: _emailController,
                       labelText: 'Email Address',
@@ -100,7 +101,7 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                       validator: (v) =>
                           v!.isEmpty ? 'Please enter your email' : null,
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.rh),
                     CustomTextField(
                       controller: _passwordController,
                       labelText: 'Password',
@@ -110,14 +111,14 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                           ? 'Password must be at least 6 chars'
                           : null,
                     ),
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40.rh),
                     ElevatedButton(
                       onPressed: state is AuthLoading ? null : _register,
                       child: state is AuthLoading
                           ? const WaveDotLoader()
                           : const Text('Sign Up'),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.rh),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -125,6 +126,7 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                           'Already have an account? ',
                           style: GoogleFonts.inter(
                             color: AppColors.textSecondary,
+                            fontSize: 14.rt,
                           ),
                         ),
                         GestureDetector(
@@ -134,12 +136,13 @@ class _RegisterPatientPageState extends State<RegisterPatientPage> {
                             style: GoogleFonts.inter(
                               color: AppColors.primary,
                               fontWeight: FontWeight.bold,
+                              fontSize: 14.rt,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40.rh),
                   ],
                 ),
               ),

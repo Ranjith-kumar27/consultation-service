@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../utils/responsive_config.dart';
 
 class EmptyState extends StatelessWidget {
   final String title;
@@ -22,12 +23,12 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.all(32.rw),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.rw),
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.05),
               shape: BoxShape.circle,
@@ -35,49 +36,46 @@ class EmptyState extends StatelessWidget {
             child: ClipOval(
               child: Image.asset(
                 imagePath ?? 'assets/icons/empty-doctor.jpg',
-                height: 150,
-                width: 150,
+                height: 150.rh,
+                width: 150.rw,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Icon(
                   icon,
-                  size: 64,
+                  size: 64.rt,
                   color: AppColors.primary.withOpacity(0.5),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.rh),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 20,
+            style: TextStyle(
+              fontSize: 20.rt,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.rh),
           Text(
             message,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 14.rt, color: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
           if (onActionPressed != null && actionLabel != null) ...[
-            const SizedBox(height: 32),
+            SizedBox(height: 32.rh),
             ElevatedButton(
               onPressed: onActionPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 24.rw,
+                  vertical: 12.rh,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
               ),
               child: Text(actionLabel!),

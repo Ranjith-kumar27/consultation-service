@@ -15,6 +15,7 @@ import 'features/call/presentation/bloc/call_bloc.dart';
 import 'features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
+import 'core/utils/responsive_config.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -87,6 +88,10 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         debugShowCheckedModeBanner: false,
         routerConfig: AppRouter.router,
+        builder: (context, child) {
+          ResponsiveConfig.init(context);
+          return child!;
+        },
       ),
     );
   }

@@ -11,6 +11,7 @@ import '../bloc/patient_state.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class PatientHistoryPage extends StatefulWidget {
   const PatientHistoryPage({super.key});
@@ -53,12 +54,12 @@ class _PatientHistoryPageState extends State<PatientHistoryPage> {
             }
             return ListView.builder(
               itemCount: state.bookings.length,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 20.rw, vertical: 10.rh),
               itemBuilder: (context, index) {
                 final booking = state.bookings[index];
                 return Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: EdgeInsets.all(20.rw),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -69,20 +70,20 @@ class _PatientHistoryPageState extends State<PatientHistoryPage> {
                               'Dr. ${booking.doctorName}',
                               style: GoogleFonts.inter(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                                fontSize: 18.rt,
                                 color: AppColors.textPrimary,
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.rw,
+                                vertical: 6.rh,
                               ),
                               decoration: BoxDecoration(
                                 color: _getStatusColor(
                                   booking.status.name,
                                 ).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(10.r),
                                 border: Border.all(
                                   color: _getStatusColor(
                                     booking.status.name,
@@ -93,7 +94,7 @@ class _PatientHistoryPageState extends State<PatientHistoryPage> {
                                 booking.status.name.toUpperCase(),
                                 style: GoogleFonts.inter(
                                   color: _getStatusColor(booking.status.name),
-                                  fontSize: 10,
+                                  fontSize: 10.rt,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.5,
                                 ),
@@ -101,22 +102,22 @@ class _PatientHistoryPageState extends State<PatientHistoryPage> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.rh),
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8.rw),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF8FAFC),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(10.r),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.calendar_today_outlined,
-                                size: 16,
+                                size: 16.rt,
                                 color: AppColors.textSecondary,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12.rw),
                             Text(
                               DateFormat(
                                 'MMM dd, yyyy  •  hh:mm a',
@@ -128,28 +129,28 @@ class _PatientHistoryPageState extends State<PatientHistoryPage> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12.rh),
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8.rw),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF8FAFC),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(10.r),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.payments_outlined,
-                                size: 16,
+                                size: 16.rt,
                                 color: AppColors.textSecondary,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12.rw),
                             Text(
                               '₹${booking.totalAmount.toStringAsFixed(0)}',
                               style: GoogleFonts.inter(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 16.rt,
                               ),
                             ),
                           ],
@@ -157,7 +158,7 @@ class _PatientHistoryPageState extends State<PatientHistoryPage> {
                         if (booking.status == AppointmentStatus.confirmed ||
                             booking.status == AppointmentStatus.completed)
                           Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
+                            padding: EdgeInsets.only(top: 20.rh),
                             child: Row(
                               children: [
                                 Expanded(
@@ -167,21 +168,21 @@ class _PatientHistoryPageState extends State<PatientHistoryPage> {
                                         '/chat/${booking.doctorId}/${booking.doctorName}',
                                       );
                                     },
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.chat_bubble_outline,
-                                      size: 18,
+                                      size: 18.rt,
                                     ),
                                     label: const Text('Chat'),
                                     style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 12.rh,
                                       ),
                                       elevation: 0,
                                       shadowColor: Colors.transparent,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 12),
+                                SizedBox(width: 12.rw),
                                 Expanded(
                                   child: OutlinedButton.icon(
                                     onPressed: () {
@@ -193,14 +194,14 @@ class _PatientHistoryPageState extends State<PatientHistoryPage> {
                                         '/call/${channelName.join('_')}',
                                       );
                                     },
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.videocam_outlined,
-                                      size: 20,
+                                      size: 20.rt,
                                     ),
                                     label: const Text('Call'),
                                     style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 12.rh,
                                       ),
                                       side: BorderSide(
                                         color: AppColors.primary.withOpacity(
@@ -208,7 +209,9 @@ class _PatientHistoryPageState extends State<PatientHistoryPage> {
                                         ),
                                       ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(
+                                          16.r,
+                                        ),
                                       ),
                                     ),
                                   ),

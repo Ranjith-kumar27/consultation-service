@@ -7,6 +7,7 @@ import '../bloc/patient_event.dart';
 import '../bloc/patient_state.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class DoctorProfilePage extends StatefulWidget {
   final String doctorId;
@@ -120,19 +121,19 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
           return Stack(
             children: [
               SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.rw),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Card(
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(24.r),
                         side: BorderSide(color: Colors.grey.shade100),
                       ),
                       color: Colors.white,
                       child: Padding(
-                        padding: const EdgeInsets.all(20.0),
+                        padding: EdgeInsets.all(20.rw),
                         child: Row(
                           children: [
                             Container(
@@ -149,7 +150,7 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                                 ],
                               ),
                               child: CircleAvatar(
-                                radius: 50,
+                                radius: 50.r,
                                 backgroundColor: Theme.of(
                                   context,
                                 ).primaryColor.withOpacity(0.1),
@@ -158,7 +159,7 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(width: 16.rw),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,46 +174,46 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                                     doctor.specialization,
                                     style: TextStyle(
                                       color: Theme.of(context).primaryColor,
-                                      fontSize: 16,
+                                      fontSize: 16.rt,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  SizedBox(height: 4.rh),
                                   if (doctor.location != null)
                                     Row(
                                       children: [
-                                        const Icon(
+                                        Icon(
                                           Icons.location_on,
-                                          size: 14,
+                                          size: 14.rt,
                                           color: Colors.grey,
                                         ),
-                                        const SizedBox(width: 4),
+                                        SizedBox(width: 4.rw),
                                         Text(
                                           doctor.location!,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             color: Colors.grey,
-                                            fontSize: 14,
+                                            fontSize: 14.rt,
                                           ),
                                         ),
                                       ],
                                     ),
-                                  const SizedBox(height: 4),
+                                  SizedBox(height: 4.rh),
                                   Text(
                                     'Fee: ₹${doctor.consultationFee.toStringAsFixed(0)}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontSize: 16.rt,
                                     ),
                                   ),
                                   Row(
                                     children: [
                                       Icon(
                                         Icons.circle,
-                                        size: 10,
+                                        size: 10.rt,
                                         color: doctor.isOnline
                                             ? Colors.green
                                             : Colors.grey,
                                       ),
-                                      const SizedBox(width: 4),
+                                      SizedBox(width: 4.rw),
                                       Text(
                                         doctor.isOnline
                                             ? 'Available Online'
@@ -220,7 +221,7 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 12),
+                                  SizedBox(height: 12.rh),
                                   Row(
                                     children: [
                                       Expanded(
@@ -230,19 +231,19 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                                               '/chat/${doctor.uid}/${doctor.name}',
                                             );
                                           },
-                                          icon: const Icon(
+                                          icon: Icon(
                                             Icons.chat_bubble_outline,
-                                            size: 18,
+                                            size: 18.rt,
                                           ),
                                           label: const Text('Chat'),
                                           style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 8,
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 8.rh,
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
+                                      SizedBox(width: 8.rw),
                                       Expanded(
                                         child: OutlinedButton.icon(
                                           onPressed: () {
@@ -260,14 +261,14 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                                               );
                                             }
                                           },
-                                          icon: const Icon(
+                                          icon: Icon(
                                             Icons.videocam_outlined,
-                                            size: 18,
+                                            size: 18.rt,
                                           ),
                                           label: const Text('Call'),
                                           style: OutlinedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 8,
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 8.rh,
                                             ),
                                           ),
                                         ),
@@ -281,26 +282,26 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    const Text(
+                    SizedBox(height: 24.rh),
+                    Text(
                       'About',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 18.rt,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.rh),
                     Text(doctor.bio ?? 'No biography available.'),
 
-                    const SizedBox(height: 24),
-                    const Text(
+                    SizedBox(height: 24.rh),
+                    Text(
                       'Book Appointment',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 18.rt,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.rh),
 
                     // Date Picker
                     ListTile(
@@ -311,7 +312,7 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                       ),
                       trailing: const Icon(Icons.calendar_today),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.r),
                         side: BorderSide(color: Colors.grey.shade300),
                       ),
                       onTap: () async {
@@ -328,11 +329,11 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                         }
                       },
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.rh),
 
                     // Slot Selection
                     const Text('Available Slots'),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.rh),
                     doctor.availableSlots.isEmpty
                         ? const Text('No slots available')
                         : Wrap(
@@ -358,7 +359,7 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                             }).toList(),
                           ),
 
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32.rh),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -366,10 +367,10 @@ class _DoctorProfilePageState extends State<DoctorProfilePage> {
                             ? null
                             : _bookAppointment,
                         child: state is PatientLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
+                            ? SizedBox(
+                                height: 20.rh,
+                                width: 20.rw,
+                                child: const CircularProgressIndicator(
                                   strokeWidth: 2,
                                   color: Colors.white,
                                 ),

@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../../domain/entities/user_entity.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -56,8 +57,8 @@ class _SplashPageState extends State<SplashPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Lottie.asset('assets/icons/heartbeat.json', width: 250),
-              const SizedBox(height: 20),
+              Lottie.asset('assets/icons/heartbeat.json', width: 250.rw),
+              SizedBox(height: 20.rh),
               Text(
                 "Doctor",
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -65,7 +66,7 @@ class _SplashPageState extends State<SplashPage> {
                   color: Colors.black54,
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 4.rh),
               Text(
                 "Consultation Service",
                 textAlign: TextAlign.center,

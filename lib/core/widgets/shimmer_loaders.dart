@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import '../utils/responsive_config.dart';
 
 class ShimmerLoading extends StatelessWidget {
   final Widget child;
@@ -25,35 +26,43 @@ class ShimmerListLoading extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: itemCount,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.rw),
       itemBuilder: (context, index) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.only(bottom: 16.rh),
         child: ShimmerLoading(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 60,
-                height: 60,
+                width: 60.rw,
+                height: 60.rh,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16.rw),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       width: double.infinity,
-                      height: 16,
+                      height: 16.rh,
                       color: Colors.white,
                     ),
-                    const SizedBox(height: 8),
-                    Container(width: 150, height: 12, color: Colors.white),
-                    const SizedBox(height: 8),
-                    Container(width: 100, height: 12, color: Colors.white),
+                    SizedBox(height: 8.rh),
+                    Container(
+                      width: 150.rw,
+                      height: 12.rh,
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 8.rh),
+                    Container(
+                      width: 100.rw,
+                      height: 12.rh,
+                      color: Colors.white,
+                    ),
                   ],
                 ),
               ),
@@ -73,10 +82,10 @@ class ShimmerCardLoading extends StatelessWidget {
     return ShimmerLoading(
       child: Container(
         width: double.infinity,
-        height: 150,
+        height: 150.rh,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
         ),
       ),
     );

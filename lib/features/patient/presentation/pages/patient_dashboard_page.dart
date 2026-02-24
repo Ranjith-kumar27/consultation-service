@@ -9,6 +9,7 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../../core/widgets/shimmer_loaders.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class PatientDashboardPage extends StatefulWidget {
   const PatientDashboardPage({super.key});
@@ -75,7 +76,7 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
         children: [
           // Search & Filter Section
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+            padding: EdgeInsets.fromLTRB(20.rw, 10.rh, 20.rw, 20.rh),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -103,9 +104,9 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                     onSubmitted: (_) => _fetchDoctors(),
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.rh),
                 SizedBox(
-                  height: 40,
+                  height: 40.rh,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: specializations.length,
@@ -114,7 +115,7 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                       final isSelected =
                           (_selectedSpecialization ?? 'All') == spec;
                       return Padding(
-                        padding: const EdgeInsets.only(right: 8),
+                        padding: EdgeInsets.only(right: 8.rw),
                         child: ChoiceChip(
                           label: Text(spec),
                           selected: isSelected,
@@ -135,7 +136,7 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                                 : FontWeight.normal,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(20.r),
                             side: BorderSide(
                               color: isSelected
                                   ? Theme.of(context).primaryColor
@@ -177,7 +178,7 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                   }
                   return ListView.builder(
                     itemCount: state.doctors.length,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 20.rw),
                     itemBuilder: (context, index) {
                       final doctor = state.doctors[index];
                       return GestureDetector(
@@ -185,7 +186,7 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                             context.push('/doctor-profile/${doctor.uid}'),
                         child: Card(
                           child: Padding(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16.rw),
                             child: Row(
                               children: [
                                 Stack(
@@ -204,7 +205,7 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                                         ],
                                       ),
                                       child: CircleAvatar(
-                                        radius: 35,
+                                        radius: 35.r,
                                         backgroundColor: Theme.of(
                                           context,
                                         ).primaryColor.withOpacity(0.1),
@@ -214,11 +215,11 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                                       ),
                                     ),
                                     Positioned(
-                                      right: 2,
-                                      bottom: 2,
+                                      right: 2.rw,
+                                      bottom: 2.rh,
                                       child: Container(
-                                        width: 14,
-                                        height: 14,
+                                        width: 14.rw,
+                                        height: 14.rh,
                                         decoration: BoxDecoration(
                                           color: doctor.isOnline
                                               ? Colors.green
@@ -233,7 +234,7 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(width: 20),
+                                SizedBox(width: 20.rw),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -245,7 +246,7 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                                           context,
                                         ).textTheme.titleLarge,
                                       ),
-                                      const SizedBox(height: 4),
+                                      SizedBox(height: 4.rh),
                                       Text(
                                         doctor.specialization,
                                         style: TextStyle(
@@ -253,15 +254,15 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      const SizedBox(height: 8),
+                                      SizedBox(height: 8.rh),
                                       Row(
                                         children: [
-                                          const Icon(
+                                          Icon(
                                             Icons.location_on,
-                                            size: 14,
+                                            size: 14.rt,
                                             color: AppColors.textSecondary,
                                           ),
-                                          const SizedBox(width: 4),
+                                          SizedBox(width: 4.rw),
                                           Text(
                                             doctor.location ?? 'Online',
                                             style: Theme.of(
@@ -274,12 +275,12 @@ class _PatientDashboardPageState extends State<PatientDashboardPage> {
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.all(8),
+                                  padding: EdgeInsets.all(8.rw),
                                   decoration: BoxDecoration(
                                     color: Theme.of(
                                       context,
                                     ).primaryColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(12.r),
                                   ),
                                   child: Icon(
                                     Icons.chevron_right,

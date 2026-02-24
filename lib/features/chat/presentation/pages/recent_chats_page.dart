@@ -7,6 +7,7 @@ import '../bloc/chat_state.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../../core/di/injection_container.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class RecentChatsPage extends StatefulWidget {
   const RecentChatsPage({super.key});
@@ -48,7 +49,7 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
             }
             return ListView.separated(
               itemCount: state.chats.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
+              separatorBuilder: (context, index) => Divider(height: 1.rh),
               itemBuilder: (context, index) {
                 final chat = state.chats[index];
                 final participants = chat['participants'] as List<dynamic>;
@@ -67,7 +68,7 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
                   ),
                   title: Text('Chat with $otherUserId'), // Placeholder
                   subtitle: const Text('Tap to open conversation'),
-                  trailing: const Icon(Icons.chevron_right, size: 20),
+                  trailing: Icon(Icons.chevron_right, size: 20.rt),
                   onTap: () {
                     context.push('/chat/$otherUserId/User');
                   },

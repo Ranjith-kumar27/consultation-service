@@ -8,6 +8,7 @@ import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/custom_text_field.dart';
 import '../../../../core/widgets/wave_dot_loader.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -65,26 +66,28 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context, state) {
           return SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
+              padding: EdgeInsets.all(24.rw),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 140),
+                    SizedBox(height: 140.rh),
                     Center(
                       child: Lottie.asset(
                         'assets/icons/welcome.json',
-                        height: 80,
+                        height: 80.rh,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.rh),
                     Text(
                       'Sign in to continue to Doctor Consultation',
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(fontSize: 14.rt),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 48),
+                    SizedBox(height: 48.rh),
                     CustomTextField(
                       controller: _emailController,
                       labelText: 'Email',
@@ -93,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                       validator: (value) =>
                           value!.isEmpty ? 'Enter email' : null,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.rh),
                     CustomTextField(
                       controller: _passwordController,
                       labelText: 'Password',
@@ -102,14 +105,14 @@ class _LoginPageState extends State<LoginPage> {
                       validator: (value) =>
                           value!.isEmpty ? 'Enter password' : null,
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32.rh),
                     ElevatedButton(
                       onPressed: state is AuthLoading ? null : _login,
                       child: state is AuthLoading
                           ? const WaveDotLoader()
                           : const Text('Login'),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24.rh),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

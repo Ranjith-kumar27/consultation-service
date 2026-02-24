@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/responsive_config.dart';
 
 class MessageInput extends StatefulWidget {
   final Function(String) onSend;
@@ -26,8 +27,8 @@ class _MessageInputState extends State<MessageInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
+      padding: EdgeInsets.symmetric(horizontal: 16.rw, vertical: 8.rh),
+      decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.divider)),
       ),
@@ -36,10 +37,10 @@ class _MessageInputState extends State<MessageInput> {
           children: [
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16.rw),
                 decoration: BoxDecoration(
                   color: AppColors.divider.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(24.r),
                 ),
                 child: TextField(
                   controller: _controller,
@@ -54,15 +55,15 @@ class _MessageInputState extends State<MessageInput> {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8.rw),
             GestureDetector(
               onTap: _handleSend,
               child: CircleAvatar(
                 backgroundColor: _isTyping
                     ? AppColors.primary
                     : AppColors.divider,
-                radius: 24,
-                child: const Icon(Icons.send, color: Colors.white, size: 20),
+                radius: 24.r,
+                child: Icon(Icons.send, color: Colors.white, size: 20.rt),
               ),
             ),
           ],
