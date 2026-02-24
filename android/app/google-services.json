@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "58878061940",
+    "project_id": "consultation-service-3ad34",
+    "storage_bucket": "consultation-service-3ad34.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:58878061940:android:06f10995fa54ef98301021",
+        "android_client_info": {
+          "package_name": "com.consultation.consultation_service_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwYEEy02lJ_q57yh9v4KI0TFP1_0AgnRs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
