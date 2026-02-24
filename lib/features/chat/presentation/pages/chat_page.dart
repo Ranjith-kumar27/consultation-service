@@ -8,6 +8,7 @@ import '../widgets/chat_bubble.dart';
 import '../widgets/message_input.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../../core/di/injection_container.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatPage extends StatefulWidget {
   final String otherUserId;
@@ -50,11 +51,27 @@ class _ChatPageState extends State<ChatPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.videocam),
-            onPressed: () {
+            onPressed: () async {
               if (currentUserId != null) {
                 final channelName = [currentUserId!, widget.otherUserId]
                   ..sort();
-                context.push('/call/${channelName.join('_')}');
+                final channelId = channelName.join('_');
+
+                // Write to 'calls' collection to trigger Cloud Function push notification
+                try {
+                  await sl<FirebaseFirestore>().collection('calls').add({
+                    'callerId': currentUserId,
+                    'receiverId': widget.otherUserId,
+                    'channelName': channelId,
+                    'startedAt': FieldValue.serverTimestamp(),
+                  });
+                } catch (e) {
+                  debugPrint("Could not write call to firestore: $e");
+                }
+
+                if (mounted) {
+                  context.push('/call/$channelId');
+                }
               }
             },
           ),

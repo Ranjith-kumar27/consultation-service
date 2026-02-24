@@ -65,10 +65,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       );
 
       final result = await sendMessageUseCase(message);
-      result.fold(
-        (failure) => emit(ChatError(failure.message)),
-        (_) => emit(MessageSent()),
-      );
+      result.fold((failure) => emit(ChatError(failure.message)), (_) {
+        // Do nothing. The Firestore stream will automatically push the new message
+        // via getChatStreamUseCase and the UI will update smoothly.
+      });
     });
 
     on<MarkMessageAsReadEvent>((event, emit) async {
